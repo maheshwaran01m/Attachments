@@ -13,6 +13,7 @@ struct AttachmentItem {
   var privateID: String?
   var fileName: String?
   var fileExtension: String?
+  var folderName: String?
   var url: URL?
   var localPath: String?
   var createdDate: String?
@@ -20,17 +21,17 @@ struct AttachmentItem {
   var isSavedLocally: Bool = false
   
   var directory: String {
-    let downloadPath = URL.documentsDirectory.appending(path: "Attachments")
+    let filePath = URL.documentsDirectory.appending(path: folderName ?? "")
     guard let folderPath = id ?? privateID, !folderPath.isEmpty else {
-      return downloadPath.path()
+      return filePath.path()
     }
-    let finalPath = downloadPath.appending(path: folderPath).path() + "/"
-    return localPath ?? finalPath
+    let finalPath = filePath.appending(path: folderPath).path() + "/"
+    return finalPath
   }
   
   var localFilePath: String {
     guard let fileName else { return directory }
-    return directory + fileName
+    return directory + fileName + ".\(fileExtension ?? "")"
   }
   
   var hasSavedLocally: Bool {
@@ -39,11 +40,10 @@ struct AttachmentItem {
   
   var getPlaceholderImage: UIImage {
     let placeholder = { () -> UIImage in
-      let image = fileName?.components(separatedBy: ".").last?.lowercased() ?? ""
-      return UIImage(named: image) ?? UIImage(systemName: "exclamationmark.triangle")!
+      let image = fileExtension ?? "exclamationmark.triangle"
+      return UIImage(contentsOfFile: localFilePath) ?? UIImage(named: image) ?? UIImage(systemName: image)!
     }
-    guard let localPath, !localPath.isEmpty,
-          let image = UIImage(contentsOfFile: localPath) else {
+    guard let localPath, let image = UIImage(contentsOfFile: localPath) else {
       return placeholder()
     }
     return image
@@ -96,8 +96,8 @@ struct AttachmentManager {
     
     fileManager.write(jpgData, atURL: finalURL)
     
-    return .init(privateID: privateID, fileName: fileName,
-                 fileExtension: "jpeg", url: finalURL, localPath: finalURL.path())
+    return .init(privateID: privateID, fileName: fileName, fileExtension: "jpeg",
+                 folderName: folderName, url: finalURL, localPath: finalURL.path())
   }
   
   func saveFile(_ fileURL: URL, fileName: String? = nil, fileType: String?,
@@ -114,7 +114,7 @@ struct AttachmentManager {
     } catch {
       print("Failed to convert data from URL: \(fileURL)")
     }
-    return .init(privateID: privateID, fileName: fileName,
-                 fileExtension: fileURL.pathExtension, url: finalURL, localPath: finalURL.path())
+    return .init(privateID: privateID, fileName: fileName, fileExtension: fileURL.pathExtension,
+                 folderName: folderName, url: finalURL, localPath: finalURL.path())
   }
 }
