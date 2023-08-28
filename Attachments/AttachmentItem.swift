@@ -18,7 +18,6 @@ struct AttachmentItem {
   var localPath: String?
   var createdDate: String?
   var image: UIImage?
-  var isSavedLocally: Bool = false
   
   var directory: String {
     let filePath = URL.documentsDirectory.appending(path: folderName ?? "")
@@ -34,8 +33,8 @@ struct AttachmentItem {
     return directory + fileName + ".\(fileExtension ?? "")"
   }
   
-  var hasSavedLocally: Bool {
-    FileManager.default.fileExists(atPath: localFilePath)
+  var isSavedLocally: Bool {
+    FileManager.default.fileExists(atPath: localPath ?? localFilePath)
   }
   
   var getPlaceholderImage: UIImage {
