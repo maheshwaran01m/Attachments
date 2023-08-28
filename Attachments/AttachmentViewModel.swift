@@ -115,17 +115,15 @@ class AttachmentViewModel: ObservableObject {
   func fileAction(_ result: Result<URL, Error>) {
     switch result {
     case.success(let url):
-      do {
-        if url.startAccessingSecurityScopedResource(),
-           let attachment = self.attachmentManager.saveFile(
-            url, fileType: url.pathExtension, folderName: "Files") {
-          DispatchQueue.main.async {
-            self.attachments.append(attachment)
-          }
+      if url.startAccessingSecurityScopedResource(),
+          let attachment = self.attachmentManager.saveFile(
+        url, fileType: url.pathExtension, folderName: "Files") {
+        DispatchQueue.main.async {
+          self.attachments.append(attachment)
         }
         url.stopAccessingSecurityScopedResource()
-      } catch let error {
-        print("Failed to import file \(error.localizedDescription)")
+      } else {
+        print("Failed to import file")
       }
       
     case .failure(let error):
