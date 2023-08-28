@@ -82,8 +82,7 @@ struct ContentView: View {
       .photosPicker(isPresented: $viewModel.showVideo, selection: $viewModel.photoPicker,
                     matching: viewModel.allowedVideoType)
       
-      .fileImporter(isPresented: $viewModel.showFiles, allowedContentTypes: viewModel.allowedFileType,
-                    onCompletion: viewModel.fileAction(_:))
+      .fileImporter(isPresented: $viewModel.showFiles, allowedContentTypes: viewModel.allowedFileType, onCompletion: viewModel.fileAction(_:))
     }
   }
   
