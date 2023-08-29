@@ -25,9 +25,15 @@ class AttachmentViewModel: ObservableObject {
   
   private let fileManager = FileManager.default
   private let attachmentManager = AttachmentManager()
+  private let folderName: String
+  
+  init(folderName: String = "Files") {
+    self.folderName = folderName
+  }
   
   var allowedFileType: [UTType] {
-    [.image, .video, .movie, .pdf, .text, .plainText, .spreadsheet, .presentation]
+    [.image, .video, .movie, .pdf, .text, .plainText, .spreadsheet,
+     .presentation, .init(filenameExtension: "doc") ?? .pdf]
   }
   
   var allowedImageType: PHPickerFilter {
@@ -48,7 +54,7 @@ class AttachmentViewModel: ObservableObject {
         switch result {
         case .success(let data):
           if let uiImage = data?.image,
-             let attachment = self.attachmentManager.saveImage(uiImage, folderName: "Files") {
+             let attachment = self.attachmentManager.saveImage(uiImage, folderName: self.folderName) {
             DispatchQueue.main.async {
               self.attachments.append(attachment)
             }
@@ -70,7 +76,7 @@ class AttachmentViewModel: ObservableObject {
         case .success(let file):
           if let url = file?.url,
              let attachment = self.attachmentManager.saveFile(
-              url, fileType: url.pathExtension, folderName: "Files") {
+              url, fileType: url.pathExtension, folderName: self.folderName) {
             DispatchQueue.main.async {
               self.attachments.append(attachment)
             }
@@ -117,11 +123,13 @@ class AttachmentViewModel: ObservableObject {
   func fileAction(_ result: Result<URL, Error>) {
     switch result {
     case.success(let url):
-      if url.startAccessingSecurityScopedResource(),
-          let attachment = self.attachmentManager.saveFile(
-        url, fileType: url.pathExtension, folderName: "Files") {
-        DispatchQueue.main.async {
-          self.attachments.append(attachment)
+      if url.startAccessingSecurityScopedResource() {
+        DispatchQueue.main.async { [weak self] in
+          guard let self else { return }
+          if let attachment = self.attachmentManager.saveFile(
+            url, fileType: url.pathExtension, folderName: self.folderName) {
+            self.attachments.append(attachment)
+          }
         }
         url.stopAccessingSecurityScopedResource()
       } else {
