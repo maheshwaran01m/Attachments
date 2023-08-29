@@ -30,7 +30,7 @@ struct ContentView: View {
         AttachmentDetailView(
           item.fileName ?? "",
           image: .init(uiImage: item.getPlaceholderImage)) {
-            
+            viewModel.delete(item.privateID)
           }
           .listRowSeparator(.hidden)
           .padding(.horizontal, 8)

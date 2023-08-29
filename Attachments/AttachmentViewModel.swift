@@ -31,7 +31,7 @@ class AttachmentViewModel: ObservableObject {
   }
   
   var allowedImageType: PHPickerFilter {
-    .any(of: [.images, .screenshots])
+    .any(of: [.images, .screenshots, .depthEffectPhotos])
   }
   
   var allowedVideoType: PHPickerFilter {
@@ -74,6 +74,8 @@ class AttachmentViewModel: ObservableObject {
             DispatchQueue.main.async {
               self.attachments.append(attachment)
             }
+            // Delete the temp file
+            FileManager.default.remove(atURL: url)
           }
         case .failure(let error):
           print("Failed to import Video \(error)")
@@ -132,9 +134,11 @@ class AttachmentViewModel: ObservableObject {
   }
   
   
-  private func saveFiles(_ url: URL) throws {
-    
-    print(url.path())
+  func delete(_ privateID: String) {
+    if let attachment = attachments.first(where: { $0.privateID == privateID }) {
+      attachment.delete()
+      attachments.removeAll(where: { $0.privateID == privateID })
+    }
   }
 }
 

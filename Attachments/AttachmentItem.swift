@@ -7,10 +7,11 @@
 
 import Foundation
 import UIKit.UIImage
+import UniformTypeIdentifiers
 
 struct AttachmentItem {
   var id: String?
-  var privateID: String?
+  var privateID: String
   var fileName: String?
   var fileExtension: String?
   var folderName: String?
@@ -19,18 +20,27 @@ struct AttachmentItem {
   var createdDate: String?
   var image: UIImage?
   
-  var directory: String {
-    let filePath = URL.documentsDirectory.appending(path: folderName ?? "")
-    guard let folderPath = id ?? privateID, !folderPath.isEmpty else {
-      return filePath.path()
-    }
-    let finalPath = filePath.appending(path: folderPath).path() + "/"
+  var directory: URL {
+    let directory = URL.documentsDirectory
+    guard let folderName else { return directory }
+    let finalPath = directory.appending(path: folderName)
+      .appending(path: id ?? privateID)
+    
     return finalPath
   }
   
   var localFilePath: String {
-    guard let fileName else { return directory }
-    return directory + fileName + ".\(fileExtension ?? "")"
+    guard let fileName, let fileExtension else {
+      return directory.path()
+    }
+    let filePath = directory
+      .appending(path: fileName)
+      .appendingPathExtension(fileExtension)
+    
+    guard FileManager.default.fileExists(filePath) else {
+      return directory.path()
+    }
+    return filePath.path()
   }
   
   var isSavedLocally: Bool {
@@ -39,8 +49,8 @@ struct AttachmentItem {
   
   var getPlaceholderImage: UIImage {
     let placeholder = { () -> UIImage in
-      let image = fileExtension ?? "exclamationmark.triangle"
-      return UIImage(contentsOfFile: localFilePath) ?? UIImage(named: image) ?? UIImage(systemName: image)!
+      let extn = fileExtension ?? "exclamationmark.triangle"
+      return UIImage(contentsOfFile: localFilePath) ?? defaultImage(for: extn)
     }
     guard let localPath, let image = UIImage(contentsOfFile: localPath) else {
       return placeholder()
@@ -51,7 +61,7 @@ struct AttachmentItem {
   func delete(completion: (() -> Void)? = nil) {
     let url = URL(filePath: localPath ?? localFilePath)
     if FileManager.default.fileExists(url) {
-      FileManager.default.remove(atURL: url)
+      FileManager.default.remove(atURL: url.deletingLastPathComponent())
     } else {
       print("Failed to delete the file at URL: \(url)")
       completion?()
@@ -67,6 +77,21 @@ struct AttachmentItem {
       attachment.url = newURL
     }
     return attachment
+  }
+  
+  func defaultImage(for value: String?) -> UIImage {
+    var string: String?
+    
+    if let type = UTType(filenameExtension: value ?? "") {
+      switch type {
+      case .movie, .mpeg4Movie, .mpeg, .mpeg2Video,
+          .video, .quickTimeMovie: string = "camera.on.rectangle"
+      case .pdf: string =  "doc"
+      case .mp3, .wav: string = "dot.radiowaves.left.and.right"
+      default: string = "exclamationmark.triangle"
+      }
+    }
+    return .init(systemName: string ?? "exclamationmark.triangle")!
   }
 }
 
