@@ -64,6 +64,8 @@ public struct AttachmentDetailView: View {
     Button(action: action) {
       Image(systemName: icon)
     }
+    .foregroundColor(Color.primary)
+    .buttonStyle(.borderless)
     .padding(10)
   }
   
