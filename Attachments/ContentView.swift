@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import QuickLook
 
 struct ContentView: View {
   
@@ -32,6 +33,10 @@ struct ContentView: View {
           image: .init(uiImage: item.getPlaceholderImage)) {
             viewModel.delete(item.privateID)
           }
+          .onTapGesture {
+            viewModel.quickLookURL = item.url
+          }
+          .quickLookPreview($viewModel.quickLookURL, in: viewModel.attachmentURLs)
           .listRowSeparator(.hidden)
           .padding(.horizontal, 8)
           .listRowBackground(

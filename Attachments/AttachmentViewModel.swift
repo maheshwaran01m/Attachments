@@ -23,6 +23,11 @@ class AttachmentViewModel: ObservableObject {
   @Published var showFiles = false
   @Published var attachments: [AttachmentItem] = []
   
+  @Published var quickLookURL: URL?
+  var attachmentURLs: [URL] {
+    attachments.map { $0.url }.compactMap { $0 }
+  }
+  
   private let fileManager = FileManager.default
   private let attachmentManager = AttachmentManager()
   private let folderName: String
