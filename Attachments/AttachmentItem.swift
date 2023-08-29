@@ -11,7 +11,7 @@ import UniformTypeIdentifiers
 
 struct AttachmentItem {
   var id: String?
-  var privateID: String
+  var privateID: String?
   var fileName: String?
   var fileExtension: String?
   var folderName: String?
@@ -22,9 +22,8 @@ struct AttachmentItem {
   
   var directory: URL {
     let directory = URL.documentsDirectory
-    guard let folderName else { return directory }
-    let finalPath = directory.appending(path: folderName)
-      .appending(path: id ?? privateID)
+    guard let folderName, let id = id ?? privateID else { return directory }
+    let finalPath = directory.appending(path: folderName).appending(path: id)
     
     return finalPath
   }
@@ -49,7 +48,7 @@ struct AttachmentItem {
   
   var getPlaceholderImage: UIImage {
     let placeholder = { () -> UIImage in
-      let extn = fileExtension ?? "exclamationmark.triangle"
+      let extn = fileExtension ?? "questionmark.folder"
       return UIImage(contentsOfFile: localFilePath) ?? defaultImage(for: extn)
     }
     guard let localPath, let image = UIImage(contentsOfFile: localPath) else {
@@ -88,10 +87,10 @@ struct AttachmentItem {
           .video, .quickTimeMovie: string = "camera.on.rectangle"
       case .pdf: string =  "doc"
       case .mp3, .wav: string = "dot.radiowaves.left.and.right"
-      default: string = "exclamationmark.triangle"
+      default: string = "questionmark.folder"
       }
     }
-    return .init(systemName: string ?? "exclamationmark.triangle")!
+    return .init(systemName: string ?? "questionmark.folder")!
   }
 }
 

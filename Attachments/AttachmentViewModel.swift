@@ -142,7 +142,7 @@ class AttachmentViewModel: ObservableObject {
   }
   
   
-  func delete(_ privateID: String) {
+  func delete(_ privateID: String?) {
     if let attachment = attachments.first(where: { $0.privateID == privateID }) {
       attachment.delete()
       attachments.removeAll(where: { $0.privateID == privateID })
