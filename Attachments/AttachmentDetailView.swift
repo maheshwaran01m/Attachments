@@ -56,8 +56,9 @@ public struct AttachmentDetailView: View {
   private var imageView: some View {
     image
       .resizable()
-      .frame(width: imageSize.width, height: 30)
+      .scaledToFit()
       .clipShape(RoundedRectangle(cornerRadius: 8))
+      .frame(width: imageSize.width, height: 30)
   }
   
   private func iconView(_ icon: String, action: @escaping () -> Void) -> some View {
