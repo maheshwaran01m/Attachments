@@ -81,24 +81,42 @@ struct ContentView: View {
       }
       .confirmationDialog("Choose Attachments", isPresented: $viewModel.showAttachmentDialog,
                           actions: confirmationDialogActions)
-      .photosPicker(isPresented: $viewModel.showPhoto, selection: $viewModel.photoPicker,
-                    matching: viewModel.allowedImageType)
       
-      .photosPicker(isPresented: $viewModel.showVideo, selection: $viewModel.photoPicker,
+      .photosPicker(isPresented: $viewModel.showPhoto, selection: $viewModel.photoPicker,
                     matching: viewModel.allowedVideoType)
       
       .fileImporter(isPresented: $viewModel.showFiles, allowedContentTypes: viewModel.allowedFileType, onCompletion: viewModel.fileAction(_:))
+      
+      .fullScreenCover(isPresented: $viewModel.showCamera) {
+        ImagePickerView(viewModel.sourceType, selectedImage: $viewModel.selectedImage,
+                        selectedURL: $viewModel.selectedVideo)
+        .ignoresSafeArea()
+      }
+      .alert("Settings", isPresented: $viewModel.showCameraAlert) {
+        Button("Cancel", action: {})
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+          Link("Open", destination: url)
+        }
+      } message: {
+        Text("Would you like to open settings")
+      }
     }
   }
   
   @ViewBuilder
   private func confirmationDialogActions() -> some View {
-    Button("Photo") {
+    Button("Take Photo") {
+      viewModel.sourceType = .takePhoto
+      viewModel.checkAccessForImagePicker()
+    }
+    Button("Take Video") {
+      viewModel.sourceType = .takeVideo
+      viewModel.checkAccessForImagePicker()
+    }
+    Button("Photo Library") {
       viewModel.showPhoto.toggle()
     }
-    Button("Video") {
-      viewModel.showVideo.toggle()
-    }
+    
     Button("Documents") {
       viewModel.showFiles.toggle()
     }

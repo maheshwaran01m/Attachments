@@ -18,9 +18,35 @@ class AttachmentViewModel: ObservableObject {
       setPhotosPickerItem(for: photoPicker)
     }
   }
-  @Published var showVideo = false
+  @Published var selectedImage: UIImage? {
+    didSet {
+      if let uiImage = selectedImage,
+         let attachment = self.attachmentManager.saveImage(uiImage, folderName: self.folderName) {
+        DispatchQueue.main.async {
+          self.attachments.append(attachment)
+        }
+      }
+    }
+  }
+  @Published var selectedVideo: URL? {
+    didSet {
+      if let url = selectedVideo,
+         let attachment = self.attachmentManager.saveFile(
+          url, fileType: url.pathExtension, folderName: self.folderName) {
+        DispatchQueue.main.async {
+          self.attachments.append(attachment)
+        }
+      }
+    }
+  }
+  
+  @Published var showCamera = false
   @Published var showPhoto = false
   @Published var showFiles = false
+  
+  @Published var sourceType: SourceType = .library
+  @Published var showCameraAlert = false
+  
   @Published var attachments: [AttachmentItem] = []
   
   @Published var quickLookURL: URL?
@@ -34,6 +60,19 @@ class AttachmentViewModel: ObservableObject {
   
   init(folderName: String = "Files") {
     self.folderName = folderName
+    
+    var url = URL.documentsDirectory
+    url.append(path: "Files/A/Flowers")
+    url.appendPathExtension("png")
+    
+    _attachments = Published(initialValue: [
+      .init(privateID: "A",
+            fileName: "Flowers",
+            fileExtension: "png",
+            folderName: "Files",
+            url: url,
+            localPath: url.path())
+    ])
   }
   
   var allowedFileType: [UTType] {
@@ -153,5 +192,50 @@ class AttachmentViewModel: ObservableObject {
       attachments.removeAll(where: { $0.privateID == privateID })
     }
   }
+  
+  // MARK: - Camera
+  
+  func checkAccessForImagePicker() {
+    let status = AVCaptureDevice.authorizationStatus(for: .video)
+    
+    switch status {
+    case .authorized:
+      showCamera.toggle()
+    case .notDetermined:
+      AVCaptureDevice.requestAccess(for: .video) { [weak self] isEnabled in
+          if isEnabled {
+            DispatchQueue.main.async {
+              self?.showCamera.toggle()
+            }
+          } else {
+            self?.showCameraAlert.toggle()
+          }
+      }
+    case .restricted, .denied:
+      self.showCameraAlert.toggle()
+      print("You have explicitly denied permission for media capture")
+    
+    default: break
+    }
+  }
+  
+  func openDeviceSettings() {
+    guard let url = URL(string: UIApplication.openSettingsURLString) else {
+      return
+    }
+    if UIApplication.shared.canOpenURL(url) {
+      UIApplication.shared.open(url, completionHandler: { _ in})
+    }
+  }
+  
+  enum SourceType {
+    case takePhoto, takeVideo, library
+    
+    var type: UIImagePickerController.SourceType {
+      switch self {
+      case .library: return .photoLibrary
+      case .takePhoto, .takeVideo: return .camera
+      }
+    }
+  }
 }
-

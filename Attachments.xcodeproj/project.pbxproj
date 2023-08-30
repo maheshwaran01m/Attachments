@@ -15,6 +15,7 @@
 		9D25379E2A9C8226009D23A7 /* AttachmentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D25379D2A9C8226009D23A7 /* AttachmentViewModel.swift */; };
 		9D2537A02A9CB3FA009D23A7 /* FileManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */; };
 		9D2537A22A9CB929009D23A7 /* AttachmentItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */; };
+		9DCF57CE2A9EEDF40098EB92 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		9D25379D2A9C8226009D23A7 /* AttachmentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentViewModel.swift; sourceTree = "<group>"; };
 		9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extensions.swift"; sourceTree = "<group>"; };
 		9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentItem.swift; sourceTree = "<group>"; };
+		9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				9D25378E2A9C7F9B009D23A7 /* ContentView.swift */,
 				9D25379D2A9C8226009D23A7 /* AttachmentViewModel.swift */,
 				9D25379B2A9C8053009D23A7 /* AttachmentDetailView.swift */,
+				9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */,
 				9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */,
 				9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */,
 			);
@@ -161,6 +164,7 @@
 				9D25379E2A9C8226009D23A7 /* AttachmentViewModel.swift in Sources */,
 				9D2537A02A9CB3FA009D23A7 /* FileManager+Extensions.swift in Sources */,
 				9D2537A22A9CB929009D23A7 /* AttachmentItem.swift in Sources */,
+				9DCF57CE2A9EEDF40098EB92 /* ImagePickerView.swift in Sources */,
 				9D25378F2A9C7F9B009D23A7 /* ContentView.swift in Sources */,
 				9D25378D2A9C7F9B009D23A7 /* AttachmentsApp.swift in Sources */,
 			);
@@ -291,8 +295,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Attachments/MainResources/Preview Content\"";
+				DEVELOPMENT_TEAM = 678BAJ4594;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Would like to allows camera to capture photos for attachments";
+				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "Would like to allow documents to save attachments";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Would like to allow microphone to record audio files for attachments";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -320,8 +328,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Attachments/MainResources/Preview Content\"";
+				DEVELOPMENT_TEAM = 678BAJ4594;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Would like to allows camera to capture photos for attachments";
+				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "Would like to allow documents to save attachments";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Would like to allow microphone to record audio files for attachments";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
