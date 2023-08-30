@@ -43,6 +43,7 @@ class AttachmentViewModel: ObservableObject {
   @Published var showCamera = false
   @Published var showPhoto = false
   @Published var showFiles = false
+  @Published var showAudio = false
   
   @Published var sourceType: SourceType = .library
   @Published var showCameraAlert = false
