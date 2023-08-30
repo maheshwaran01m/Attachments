@@ -100,6 +100,9 @@ struct ContentView: View {
       } message: {
         Text("Would you like to open settings")
       }
+      .sheet(isPresented: $viewModel.showAudio) {
+        AudioRecorderView()
+      }
     }
   }
   
@@ -119,6 +122,10 @@ struct ContentView: View {
     
     Button("Documents") {
       viewModel.showFiles.toggle()
+    }
+    
+    Button("Audio") {
+      viewModel.showAudio.toggle()
     }
   }
 }

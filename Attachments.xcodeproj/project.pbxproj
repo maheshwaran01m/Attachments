@@ -16,6 +16,7 @@
 		9D2537A02A9CB3FA009D23A7 /* FileManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */; };
 		9D2537A22A9CB929009D23A7 /* AttachmentItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */; };
 		9DCF57CE2A9EEDF40098EB92 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */; };
+		9DCF57D02A9F51FC0098EB92 /* AudioRecorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCF57CF2A9F51FC0098EB92 /* AudioRecorderView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extensions.swift"; sourceTree = "<group>"; };
 		9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentItem.swift; sourceTree = "<group>"; };
 		9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
+		9DCF57CF2A9F51FC0098EB92 /* AudioRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 				9D25379D2A9C8226009D23A7 /* AttachmentViewModel.swift */,
 				9D25379B2A9C8053009D23A7 /* AttachmentDetailView.swift */,
 				9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */,
+				9DCF57CF2A9F51FC0098EB92 /* AudioRecorderView.swift */,
 				9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */,
 				9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */,
 			);
@@ -165,6 +168,7 @@
 				9D2537A02A9CB3FA009D23A7 /* FileManager+Extensions.swift in Sources */,
 				9D2537A22A9CB929009D23A7 /* AttachmentItem.swift in Sources */,
 				9DCF57CE2A9EEDF40098EB92 /* ImagePickerView.swift in Sources */,
+				9DCF57D02A9F51FC0098EB92 /* AudioRecorderView.swift in Sources */,
 				9D25378F2A9C7F9B009D23A7 /* ContentView.swift in Sources */,
 				9D25378D2A9C7F9B009D23A7 /* AttachmentsApp.swift in Sources */,
 			);
