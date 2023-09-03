@@ -120,12 +120,12 @@ struct ContentView: View {
       viewModel.showPhoto.toggle()
     }
     
-    Button("Documents") {
-      viewModel.showFiles.toggle()
-    }
-    
     Button("Audio") {
       viewModel.showAudio.toggle()
+    }
+    
+    Button("Documents") {
+      viewModel.showFiles.toggle()
     }
   }
 }
