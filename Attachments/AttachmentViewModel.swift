@@ -52,7 +52,7 @@ class AttachmentViewModel: ObservableObject {
   
   @Published var quickLookURL: URL?
   var attachmentURLs: [URL] {
-    attachments.map { $0.url }.compactMap { $0 }
+    attachments.map { URL(filePath: $0.localFilePath) }
   }
   
   private let fileManager = FileManager.default
@@ -61,19 +61,6 @@ class AttachmentViewModel: ObservableObject {
   
   init(folderName: String = "Files") {
     self.folderName = folderName
-    
-    var url = URL.documentsDirectory
-    url.append(path: "Files/A/Flowers")
-    url.appendPathExtension("png")
-    
-    _attachments = Published(initialValue: [
-      .init(privateID: "A",
-            fileName: "Flowers",
-            fileExtension: "png",
-            folderName: "Files",
-            url: url,
-            localPath: url.path())
-    ])
   }
   
   var allowedFileType: [UTType] {

@@ -25,13 +25,14 @@ public extension FileManager {
   
   // MARK: - Write
   
-  func write(_ data: Data, atURL url: URL, completion: (() -> Void)? = nil) {
+  func write(_ data: Data, atPath path: String, completion: (() -> Void)? = nil) {
     do {
-      try data.write(to: url, options: [.atomic])
+      try data.write(to: URL(filePath: path), options: [.atomic])
+      print("Saved an attachment at: \(path)")
       completion?()
     } catch {
       print("""
-            Failed to write contents for URL: \(url),
+            Failed to write contents for Path: \(path),
             Reason: \(error.localizedDescription)
             """)
       completion?()

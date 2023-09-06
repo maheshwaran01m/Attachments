@@ -34,7 +34,7 @@ struct ContentView: View {
             viewModel.delete(item.privateID)
           }
           .onTapGesture {
-            viewModel.quickLookURL = item.url
+            viewModel.quickLookURL = URL(filePath: item.localFilePath)
           }
           .quickLookPreview($viewModel.quickLookURL, in: viewModel.attachmentURLs)
           .listRowSeparator(.hidden)

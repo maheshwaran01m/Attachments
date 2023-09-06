@@ -20,62 +20,78 @@ struct AttachmentItem {
   var createdDate: String?
   var image: UIImage?
   
-  var directory: URL {
+  var directory: String {
     let directory = URL.documentsDirectory
-    guard let folderName, let id = id ?? privateID else { return directory }
-    let finalPath = directory.appending(path: folderName).appending(path: id)
+    guard let folderName, let id = id ?? privateID else { return directory.path() }
+    let finalPath = directory.path() + folderName + "/\(id)"
     
     return finalPath
   }
   
   var localFilePath: String {
-    guard let fileName, let fileExtension else {
-      return directory.path()
+    if let localPath, FileManager.default.fileExists(atPath: localPath) {
+      return localPath
+    } else {
+      guard let fileName, let fileExtension else {
+        return directory
+      }
+      let filePath = directory + "/\(fileName).\(fileExtension)"
+      guard FileManager.default.fileExists(atPath: filePath) else {
+        return directory
+      }
+      return filePath
     }
-    let filePath = directory
-      .appending(path: fileName)
-      .appendingPathExtension(fileExtension)
-    
-    guard FileManager.default.fileExists(filePath) else {
-      return directory.path()
-    }
-    return filePath.path()
   }
   
   var isSavedLocally: Bool {
-    FileManager.default.fileExists(atPath: localPath ?? localFilePath)
+    FileManager.default.fileExists(atPath: localFilePath)
   }
   
   var getPlaceholderImage: UIImage {
     let placeholder = { () -> UIImage in
-      let extn = fileExtension ?? "questionmark.folder"
-      return UIImage(contentsOfFile: localFilePath) ?? defaultImage(for: extn)
+      return defaultImage(for: fileExtension)
     }
-    guard let localPath, let image = UIImage(contentsOfFile: localPath) else {
+    guard let image = UIImage(contentsOfFile: localFilePath) else {
       return placeholder()
     }
     return image
   }
   
-  func delete(completion: (() -> Void)? = nil) {
-    let url = URL(filePath: localPath ?? localFilePath)
-    if FileManager.default.fileExists(url) {
-      FileManager.default.remove(atURL: url.deletingLastPathComponent())
+  public func delete(completion: (() -> Void)? = nil) {
+    if FileManager.default.fileExists(atPath: localFilePath) {
+      let url = URL(filePath: localFilePath).deletingLastPathComponent()
+      FileManager.default.remove(atURL: url)
+      completion?()
     } else {
-      print("Failed to delete the file at URL: \(url)")
+      print("Failed to delete the file at Path: \(localFilePath)")
       completion?()
     }
   }
   
   func move(_ fileName: String) -> Self? {
-    var attachment = self
-    if let url = attachment.url {
-      let extn = url.pathExtension
-      let newURL = url.deletingLastPathComponent().appending(path: fileName).appendingPathExtension(extn)
-      FileManager.default.move(atURL: url, to: newURL)
-      attachment.url = newURL
+    if let localPath {
+      let url = URL(filePath: localPath)
+      let oldURL = url.deletingLastPathComponent().path()
+      let newFilePath = oldURL + fileName + "." + url.pathExtension
+      
+      do {
+        try FileManager.default.moveItem(atPath: url.path(), toPath: newFilePath)
+        
+        if FileManager.default.fileExists(atPath: newFilePath) {
+          var attachment = self
+          attachment.localPath = newFilePath
+          attachment.fileName = fileName
+          return attachment
+        }
+      } catch {
+        print("""
+              Failed to move for URL: \(url),
+              Reason: \(error.localizedDescription)
+              """)
+        return nil
+      }
     }
-    return attachment
+    return nil
   }
   
   func defaultImage(for value: String?) -> UIImage {
@@ -114,13 +130,12 @@ struct AttachmentManager {
       return nil
     }
     let fileName = fileName ?? "Image"
-    var finalURL = folderURL.appending(path: fileName)
-    finalURL.appendPathExtension(for: .jpeg)
+    let finalPath = folderURL.path() + "/" + fileName + ".jpeg"
     
-    fileManager.write(jpgData, atURL: finalURL)
+    fileManager.write(jpgData, atPath: finalPath)
     
     return .init(privateID: privateID, fileName: fileName, fileExtension: "jpeg",
-                 folderName: folderName, url: finalURL, localPath: finalURL.path())
+                 folderName: folderName, localPath: finalPath)
   }
   
   func saveFile(_ fileURL: URL, fileName: String? = nil, fileType: String?,
@@ -129,15 +144,14 @@ struct AttachmentManager {
       return nil
     }
     let fileName = fileName ?? fileURL.deletingPathExtension().lastPathComponent
-    let finalURL = folderURL.appending(path: fileName).appendingPathExtension(fileURL.pathExtension)
-    
+    let finalPath = folderURL.path() + "/" + fileName + "." + fileURL.pathExtension
     do {
       let data = try Data(contentsOf: fileURL)
-      fileManager.write(data, atURL: finalURL)
+      fileManager.write(data, atPath: finalPath)
     } catch {
-      print("Failed to convert data from URL: \(fileURL)")
+      print("Failed to convert data from Path: \(finalPath)")
     }
     return .init(privateID: privateID, fileName: fileName, fileExtension: fileURL.pathExtension,
-                 folderName: folderName, url: finalURL, localPath: finalURL.path())
+                 folderName: folderName, localPath: finalPath)
   }
 }
