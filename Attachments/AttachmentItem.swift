@@ -49,12 +49,25 @@ struct AttachmentItem {
   
   var getPlaceholderImage: UIImage {
     let placeholder = { () -> UIImage in
-      return defaultImage(for: fileExtension)
+      return .init(systemName: defaultIcon)!
     }
     guard let image = UIImage(contentsOfFile: localFilePath) else {
       return placeholder()
     }
     return image
+  }
+  
+  public var getThumbImage: AttachmentDetailView.ImageStyle {
+    let placeholder = { () -> AttachmentDetailView.ImageStyle in
+      if let image = UIImage(contentsOfFile: localFilePath) {
+        return .image(.init(uiImage: image))
+      }
+      return .icon(defaultIcon)
+    }
+    guard let localPath, let image = UIImage(contentsOfFile: localPath) else {
+      return placeholder()
+    }
+    return .image(.init(uiImage: image))
   }
   
   public func delete(completion: (() -> Void)? = nil) {
@@ -94,19 +107,20 @@ struct AttachmentItem {
     return nil
   }
   
-  func defaultImage(for value: String?) -> UIImage {
+  var defaultIcon: String {
     var string: String?
     
-    if let type = UTType(filenameExtension: value ?? "") {
+    if let type = UTType(filenameExtension: fileExtension ?? "") {
       switch type {
       case .movie, .mpeg4Movie, .mpeg, .mpeg2Video,
-          .video, .quickTimeMovie: string = "camera.on.rectangle"
+          .video, .quickTimeMovie: string = "video"
       case .pdf: string =  "doc"
       case .mp3, .wav: string = "dot.radiowaves.left.and.right"
+      case .text, .rtf: string = "doc.text"
       default: string = "questionmark.folder"
       }
     }
-    return .init(systemName: string ?? "questionmark.folder")!
+    return string ?? "questionmark.folder"
   }
 }
 
