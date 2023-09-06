@@ -30,7 +30,7 @@ struct ContentView: View {
       List(viewModel.attachments, id: \.privateID) { item in
         AttachmentDetailView(
           item.fileName ?? "",
-          image: .init(uiImage: item.getPlaceholderImage)) {
+          imageStyle: item.getThumbImage) {
             viewModel.delete(item.privateID)
           }
           .onTapGesture {

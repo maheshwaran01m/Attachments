@@ -9,21 +9,22 @@ import SwiftUI
 
 public struct AttachmentDetailView: View {
   
+  private var imageStyle: ImageStyle
   private var imageSize: ImageSize = .size40
   private var style: Style = .onlyTitle
   private var title: String
-  private var image: Image
+  
   private var deleteAction: () -> Void
   private var isDownloadEnabled: Bool = false
   private var downloadAction: (() -> Void)?
   private var iconColor: Color = .primary
   
   public init(_ title: String,
-              image: Image,
+              imageStyle: AttachmentDetailView.ImageStyle,
               style: AttachmentDetailView.Style = .onlyTitle,
               deleteAction: @escaping () -> Void) {
     self.title = title
-    self.image = image
+    self.imageStyle = imageStyle
     self.style = style
     self.deleteAction = deleteAction
   }
@@ -53,12 +54,27 @@ public struct AttachmentDetailView: View {
     }
   }
   
+  @ViewBuilder
   private var imageView: some View {
-    image
-      .resizable()
-      .clipShape(RoundedRectangle(cornerRadius: 8))
-      .frame(width: imageSize.width, height: 30)
-      .scaledToFill()
+    switch imageStyle {
+    case .image(let image):
+      image
+        .resizable()
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .frame(width: imageSize.width, height: 40)
+        .scaledToFill()
+    case .icon(let icon):
+      RoundedRectangle(cornerRadius: 8)
+        .fill(Color.gray.opacity(0.3))
+        .overlay {
+            Image(systemName: icon)
+              .scaledToFit()
+              .frame(width: 24, height: 24)
+              .clipped()
+              .foregroundStyle(iconColor)
+        }
+        .frame(width: imageSize.width, height: 40)
+    }
   }
   
   private func iconView(_ icon: String, action: @escaping () -> Void) -> some View {
@@ -105,6 +121,10 @@ public extension AttachmentDetailView {
     }
   }
   
+  enum ImageStyle {
+    case image(Image), icon(String)
+  }
+  
   func imageSize(_ imageSize: ImageSize) -> Self {
     var newView = self
     newView.imageSize = imageSize
@@ -127,7 +147,7 @@ public extension AttachmentDetailView {
 
 struct AttachmentDetailView_Previews: PreviewProvider {
   static var previews: some View {
-    AttachmentDetailView("Hello", image: .init(systemName: "laptopcomputer"),
+    AttachmentDetailView("Hello", imageStyle: .icon( "laptopcomputer"),
                       style: .withDescription("Example")) {}
       .download(true, action: {})
       .padding(.horizontal, 20)
