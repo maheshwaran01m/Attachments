@@ -65,7 +65,7 @@ class AttachmentViewModel: ObservableObject {
   
   var allowedFileType: [UTType] {
     [.image, .video, .movie, .pdf, .text, .plainText, .spreadsheet,
-     .presentation, .init(filenameExtension: "doc") ?? .pdf]
+     .presentation, .mpeg4Movie, .mpeg4Audio,  .init(filenameExtension: "doc") ?? .pdf]
   }
   
   var allowedImageType: PHPickerFilter {
