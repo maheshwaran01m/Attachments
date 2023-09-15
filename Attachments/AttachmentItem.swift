@@ -111,13 +111,13 @@ struct AttachmentItem {
   var defaultIcon: String {
     var string: String?
     
-    if let type = UTType(filenameExtension: fileExtension ?? "") {
+    if let type = UTType(filenameExtension: fileExtension?.lowercased() ?? "") {
       switch type {
       case .movie, .mpeg4Movie, .mpeg, .mpeg2Video,
           .video, .quickTimeMovie: string = "video"
       case .pdf: string =  "doc"
       case .mp3, .wav: string = "dot.radiowaves.left.and.right"
-      case .text, .rtf: string = "doc.text"
+      case .text, .plainText, .rtf: string = "doc.text"
       default: string = "questionmark.folder"
       }
     }
