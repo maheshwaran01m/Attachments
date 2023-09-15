@@ -8,6 +8,7 @@
 import Foundation
 import UIKit.UIImage
 import UniformTypeIdentifiers
+import QuickLook
 
 struct AttachmentItem {
   var id: String?
@@ -121,6 +122,26 @@ struct AttachmentItem {
       }
     }
     return string ?? "questionmark.folder"
+  }
+  
+  func generateThumbnail(_ completion: @escaping (UIImage) -> Void)  {
+    let request = QLThumbnailGenerator.Request(
+      fileAt: URL(filePath: localFilePath),
+      size: .init(width: 53, height: 40),
+      scale: UIScreen.main.scale,
+      representationTypes: .all)
+    
+    let generator = QLThumbnailGenerator.shared
+    generator.generateRepresentations(for: request) { thumb, type, error in
+      if let thumb {
+        DispatchQueue.main.async {
+          completion(thumb.uiImage)
+        }
+        
+      } else if let error {
+        print("Error while generating thumbnail: \(error)")
+      }
+    }
   }
 }
 
