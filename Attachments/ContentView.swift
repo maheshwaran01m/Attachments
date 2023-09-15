@@ -83,7 +83,7 @@ struct ContentView: View {
                           actions: confirmationDialogActions)
       
       .photosPicker(isPresented: $viewModel.showPhoto, selection: $viewModel.photoPicker,
-                    matching: viewModel.allowedVideoType)
+                    matching: viewModel.allowedImageType)
       
       .fileImporter(isPresented: $viewModel.showFiles, allowedContentTypes: viewModel.allowedFileType, onCompletion: viewModel.fileAction(_:))
       
@@ -102,6 +102,12 @@ struct ContentView: View {
       }
       .sheet(isPresented: $viewModel.showAudio) {
         AudioRecorderView()
+      }
+      .sheet(isPresented: $viewModel.quickLookEdit) {
+        if let path = viewModel.selectedAttachmentItem?.localFilePath, !path.isEmpty {
+          QuickLookEditorView(url: .init(filePath: path),
+                              selectedItem: $viewModel.selectedQuickLookItem)
+        }
       }
     }
   }

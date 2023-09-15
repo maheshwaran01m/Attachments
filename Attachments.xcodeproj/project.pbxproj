@@ -15,6 +15,8 @@
 		9D25379E2A9C8226009D23A7 /* AttachmentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D25379D2A9C8226009D23A7 /* AttachmentViewModel.swift */; };
 		9D2537A02A9CB3FA009D23A7 /* FileManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */; };
 		9D2537A22A9CB929009D23A7 /* AttachmentItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */; };
+		9D48ECC02AB1FC7100EC68FC /* ImageEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D48ECBF2AB1FC7100EC68FC /* ImageEditorView.swift */; };
+		9DB0D7F72AB3EB5F00DE334D /* QuickLookEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB0D7F62AB3EB5F00DE334D /* QuickLookEditorView.swift */; };
 		9DCF57CE2A9EEDF40098EB92 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */; };
 		9DCF57D02A9F51FC0098EB92 /* AudioRecorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCF57CF2A9F51FC0098EB92 /* AudioRecorderView.swift */; };
 /* End PBXBuildFile section */
@@ -29,6 +31,8 @@
 		9D25379D2A9C8226009D23A7 /* AttachmentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentViewModel.swift; sourceTree = "<group>"; };
 		9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extensions.swift"; sourceTree = "<group>"; };
 		9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentItem.swift; sourceTree = "<group>"; };
+		9D48ECBF2AB1FC7100EC68FC /* ImageEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageEditorView.swift; sourceTree = "<group>"; };
+		9DB0D7F62AB3EB5F00DE334D /* QuickLookEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLookEditorView.swift; sourceTree = "<group>"; };
 		9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		9DCF57CF2A9F51FC0098EB92 /* AudioRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -71,6 +75,8 @@
 				9DCF57CF2A9F51FC0098EB92 /* AudioRecorderView.swift */,
 				9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */,
 				9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */,
+				9DB0D7F62AB3EB5F00DE334D /* QuickLookEditorView.swift */,
+				9D48ECBF2AB1FC7100EC68FC /* ImageEditorView.swift */,
 			);
 			path = Attachments;
 			sourceTree = "<group>";
@@ -171,6 +177,8 @@
 				9DCF57D02A9F51FC0098EB92 /* AudioRecorderView.swift in Sources */,
 				9D25378F2A9C7F9B009D23A7 /* ContentView.swift in Sources */,
 				9D25378D2A9C7F9B009D23A7 /* AttachmentsApp.swift in Sources */,
+				9DB0D7F72AB3EB5F00DE334D /* QuickLookEditorView.swift in Sources */,
+				9D48ECC02AB1FC7100EC68FC /* ImageEditorView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -45,6 +45,8 @@ class AttachmentViewModel: ObservableObject {
   @Published var showFiles = false
   @Published var showAudio = false
   
+  @Published var showPhotoEditor = false
+  
   @Published var sourceType: SourceType = .library
   @Published var showCameraAlert = false
   
@@ -55,6 +57,16 @@ class AttachmentViewModel: ObservableObject {
     attachments.map { URL(filePath: $0.localFilePath) }
   }
   
+  @Published var quickLookEdit = false
+  @Published var selectedQuickLookItem: QuickLookItem? {
+    didSet {
+      if let selectedQuickLookItem {
+        self.addAttachmentItem(for: selectedQuickLookItem.fileName)
+      }
+    }
+  }
+  
+  private (set) var selectedAttachmentItem: AttachmentItem?
   private let fileManager = FileManager.default
   private let attachmentManager = AttachmentManager()
   private let folderName: String
@@ -87,8 +99,9 @@ class AttachmentViewModel: ObservableObject {
         case .success(let data):
           if let uiImage = data?.image,
              let attachment = self.attachmentManager.saveImage(uiImage, folderName: self.folderName) {
+            self.selectedAttachmentItem = attachment
             DispatchQueue.main.async {
-              self.attachments.append(attachment)
+                self.quickLookEdit = true
             }
           }
         case .failure(let error):
@@ -181,10 +194,31 @@ class AttachmentViewModel: ObservableObject {
     }
   }
   
+  func addAttachmentItem(for fileName: String? = nil) {
+    var attachmentItem: AttachmentItem?
+    if let fileName {
+      attachmentItem = selectedAttachmentItem?.move(fileName)
+    } else {
+      attachmentItem = selectedAttachmentItem
+    }
+    if let attachmentItem {
+      DispatchQueue.main.async {
+        self.attachments.append(attachmentItem)
+      }
+    }
+    self.selectedAttachmentItem = nil
+  }
+  
   // MARK: - Camera
   
   func checkAccessForImagePicker() {
     let status = AVCaptureDevice.authorizationStatus(for: .video)
+    
+    guard UIImagePickerController.isSourceTypeAvailable(.camera) &&
+           UIImagePickerController.availableCaptureModes(for: .rear) != nil else {
+      showPhoto = true
+      return
+    }
     
     switch status {
     case .authorized:
