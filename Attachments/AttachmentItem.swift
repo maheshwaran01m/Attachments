@@ -30,8 +30,14 @@ struct AttachmentItem {
   }
   
   var localFilePath: String {
-    if let localPath, FileManager.default.fileExists(atPath: localPath) {
-      return localPath
+    if let localPath {
+      if FileManager.default.fileExists(atPath: localPath) {
+        return localPath
+      } else {
+        let split = localPath.split(separator: "Documents/")
+        let filePath = URL.documentsDirectory.path() + split[0]
+        return filePath
+      }
     } else {
       guard let fileName, let fileExtension else {
         return directory
