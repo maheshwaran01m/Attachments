@@ -16,6 +16,7 @@
 		9D2537A02A9CB3FA009D23A7 /* FileManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */; };
 		9D2537A22A9CB929009D23A7 /* AttachmentItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */; };
 		9D48ECC02AB1FC7100EC68FC /* ImageEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D48ECBF2AB1FC7100EC68FC /* ImageEditorView.swift */; };
+		9D4E457E2AB54032003B0C11 /* AudioRecorderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4E457D2AB54032003B0C11 /* AudioRecorderViewModel.swift */; };
 		9DB0D7F72AB3EB5F00DE334D /* QuickLookEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB0D7F62AB3EB5F00DE334D /* QuickLookEditorView.swift */; };
 		9DCF57CE2A9EEDF40098EB92 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */; };
 		9DCF57D02A9F51FC0098EB92 /* AudioRecorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCF57CF2A9F51FC0098EB92 /* AudioRecorderView.swift */; };
@@ -32,6 +33,7 @@
 		9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extensions.swift"; sourceTree = "<group>"; };
 		9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentItem.swift; sourceTree = "<group>"; };
 		9D48ECBF2AB1FC7100EC68FC /* ImageEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageEditorView.swift; sourceTree = "<group>"; };
+		9D4E457D2AB54032003B0C11 /* AudioRecorderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderViewModel.swift; sourceTree = "<group>"; };
 		9DB0D7F62AB3EB5F00DE334D /* QuickLookEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLookEditorView.swift; sourceTree = "<group>"; };
 		9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		9DCF57CF2A9F51FC0098EB92 /* AudioRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderView.swift; sourceTree = "<group>"; };
@@ -72,7 +74,7 @@
 				9D25379D2A9C8226009D23A7 /* AttachmentViewModel.swift */,
 				9D25379B2A9C8053009D23A7 /* AttachmentDetailView.swift */,
 				9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */,
-				9DCF57CF2A9F51FC0098EB92 /* AudioRecorderView.swift */,
+				9D4E457C2AB5401F003B0C11 /* Audio */,
 				9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */,
 				9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */,
 				9DB0D7F62AB3EB5F00DE334D /* QuickLookEditorView.swift */,
@@ -97,6 +99,15 @@
 				9D2537922A9C7F9C009D23A7 /* Preview Content */,
 			);
 			path = MainResources;
+			sourceTree = "<group>";
+		};
+		9D4E457C2AB5401F003B0C11 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				9DCF57CF2A9F51FC0098EB92 /* AudioRecorderView.swift */,
+				9D4E457D2AB54032003B0C11 /* AudioRecorderViewModel.swift */,
+			);
+			path = Audio;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -169,6 +180,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D4E457E2AB54032003B0C11 /* AudioRecorderViewModel.swift in Sources */,
 				9D25379C2A9C8053009D23A7 /* AttachmentDetailView.swift in Sources */,
 				9D25379E2A9C8226009D23A7 /* AttachmentViewModel.swift in Sources */,
 				9D2537A02A9CB3FA009D23A7 /* FileManager+Extensions.swift in Sources */,
