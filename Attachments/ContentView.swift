@@ -101,7 +101,9 @@ struct ContentView: View {
         Text("Would you like to open settings")
       }
       .sheet(isPresented: $viewModel.showAudio) {
-        AudioRecorderView()
+        AudioRecorderView($viewModel.audioAttachmentItem,
+                          manager: viewModel.attachmentManager)
+          .presentationDetents([.medium])
       }
       .sheet(isPresented: $viewModel.quickLookEdit) {
         if let path = viewModel.selectedAttachmentItem?.localFilePath, !path.isEmpty {

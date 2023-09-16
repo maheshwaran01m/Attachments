@@ -40,6 +40,22 @@ class AttachmentViewModel: ObservableObject {
     }
   }
   
+  @Published public var audioAttachmentItem: QuickLookItem? {
+    didSet {
+      if let audioAttachmentItem, let url = audioAttachmentItem.url {
+        let attachment = AttachmentItem(
+          privateID: audioAttachmentItem.id,
+          fileName: audioAttachmentItem.fileName ?? audioAttachmentItem.url?.deletingPathExtension().lastPathComponent,
+          fileExtension: audioAttachmentItem.url?.pathExtension,
+          folderName: folderName, localPath: url.path())
+        
+        DispatchQueue.main.async {
+          self.attachments.append(attachment)
+        }
+      }
+    }
+  }
+  
   @Published var showCamera = false
   @Published var showPhoto = false
   @Published var showFiles = false
@@ -68,7 +84,7 @@ class AttachmentViewModel: ObservableObject {
   
   private (set) var selectedAttachmentItem: AttachmentItem?
   private let fileManager = FileManager.default
-  private let attachmentManager = AttachmentManager()
+  let attachmentManager = AttachmentManager()
   private let folderName: String
   
   init(folderName: String = "Files") {
@@ -77,7 +93,7 @@ class AttachmentViewModel: ObservableObject {
   
   var allowedFileType: [UTType] {
     [.image, .video, .movie, .pdf, .text, .plainText, .spreadsheet,
-     .presentation, .mpeg4Movie, .mpeg4Audio,  .init(filenameExtension: "doc") ?? .pdf]
+     .presentation, .mpeg4Movie, .mpeg4Audio,  .init(filenameExtension: "m4a") ?? .audio]
   }
   
   var allowedImageType: PHPickerFilter {
@@ -260,4 +276,18 @@ class AttachmentViewModel: ObservableObject {
       }
     }
   }
+}
+
+// MARK: - AttachmentAlertOptions
+
+public enum AttachmentAlertItem: CaseIterable, Identifiable {
+  case skip, save
+  
+  public var title: String {
+    switch self {
+    case .save: return "Save"
+    case .skip: return "Skip"
+    }
+  }
+  public var id: String { title }
 }

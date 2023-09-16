@@ -118,7 +118,12 @@ struct AttachmentItem {
       case .pdf: string =  "doc"
       case .mp3, .wav: string = "dot.radiowaves.left.and.right"
       case .text, .plainText, .rtf: string = "doc.text"
-      default: string = "questionmark.folder"
+      default:
+        if type.identifier == "m4a" {
+          string = "dot.radiowaves.left.and.right"
+        } else {
+          string = "questionmark.folder"
+        }
       }
     }
     return string ?? "questionmark.folder"
@@ -150,7 +155,7 @@ struct AttachmentManager {
   private let fileManager = FileManager.default
   private let documentURL = URL.documentsDirectory
   
-  private func attachmentFolder(for folderName: String? = nil, privateID: String) -> URL? {
+  func attachmentFolder(for folderName: String? = nil, privateID: String) -> URL? {
     if let folderName {
       return FileManager.default.create(named: privateID, folder: folderName)
     }
@@ -188,5 +193,9 @@ struct AttachmentManager {
     }
     return .init(privateID: privateID, fileName: fileName, fileExtension: fileURL.pathExtension,
                  folderName: folderName, localPath: finalPath)
+  }
+  
+  var getTimeStamp: String {
+    return String(describing: Int64(Date().timeIntervalSince1970 * 1000))
   }
 }
