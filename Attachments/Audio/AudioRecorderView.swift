@@ -58,6 +58,10 @@ struct AudioRecorderView: View {
       recordButton
       playButtonView
     }
+    .onReceive(NotificationCenter.default.publisher(
+      for: UIApplication.didEnterBackgroundNotification)) { _ in
+        viewModel.stopRecording()
+    }
   }
   
   private var recordButton: some View {

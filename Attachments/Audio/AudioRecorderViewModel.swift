@@ -79,7 +79,7 @@ class AudioRecorderViewModel: NSObject, ObservableObject {
   
   // MARK: - Stop Recording
   
-  private func stopRecording() {
+  func stopRecording() {
     guard audioRecorder != nil else { return }
     audioRecorder?.stop()
     audioRecorder = nil
