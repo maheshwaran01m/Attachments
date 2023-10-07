@@ -7,6 +7,7 @@
 
 import SwiftUI
 import QuickLook
+import Toast
 
 struct ContentView: View {
   
@@ -21,6 +22,7 @@ struct ContentView: View {
       contentView
         .toolbar(content: addButton)
         .navigationTitle("Files")
+        .showToast($viewModel.showToast)
     }
   }
   

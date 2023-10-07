@@ -9,6 +9,7 @@ import SwiftUI
 import PhotosUI
 import MobileCoreServices
 import UniformTypeIdentifiers
+import Toast
 
 class AttachmentViewModel: ObservableObject {
   
@@ -81,6 +82,8 @@ class AttachmentViewModel: ObservableObject {
       }
     }
   }
+  
+  @Published var showToast: ToastMessage?
   
   private (set) var selectedAttachmentItem: AttachmentItem?
   private let fileManager = FileManager.default
