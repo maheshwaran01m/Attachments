@@ -16,6 +16,7 @@
 		9D2537A02A9CB3FA009D23A7 /* FileManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */; };
 		9D2537A22A9CB929009D23A7 /* AttachmentItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */; };
 		9D48ECC02AB1FC7100EC68FC /* ImageEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D48ECBF2AB1FC7100EC68FC /* ImageEditorView.swift */; };
+		9D4C52E92ABEA4A400025D3B /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = 9D4C52E82ABEA4A400025D3B /* Toast */; };
 		9D4E457E2AB54032003B0C11 /* AudioRecorderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4E457D2AB54032003B0C11 /* AudioRecorderViewModel.swift */; };
 		9DB0D7F72AB3EB5F00DE334D /* QuickLookEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB0D7F62AB3EB5F00DE334D /* QuickLookEditorView.swift */; };
 		9DCF57CE2A9EEDF40098EB92 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */; };
@@ -44,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D4C52E92ABEA4A400025D3B /* Toast in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,6 +128,9 @@
 			dependencies = (
 			);
 			name = Attachments;
+			packageProductDependencies = (
+				9D4C52E82ABEA4A400025D3B /* Toast */,
+			);
 			productName = Attachments;
 			productReference = 9D2537892A9C7F9B009D23A7 /* Attachments.app */;
 			productType = "com.apple.product-type.application";
@@ -154,6 +159,9 @@
 				Base,
 			);
 			mainGroup = 9D2537802A9C7F9B009D23A7;
+			packageReferences = (
+				9D4C52E72ABEA4A400025D3B /* XCRemoteSwiftPackageReference "Toast" */,
+			);
 			productRefGroup = 9D25378A2A9C7F9B009D23A7 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -399,6 +407,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9D4C52E72ABEA4A400025D3B /* XCRemoteSwiftPackageReference "Toast" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:maheshwaran01m/Toast.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9D4C52E82ABEA4A400025D3B /* Toast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9D4C52E72ABEA4A400025D3B /* XCRemoteSwiftPackageReference "Toast" */;
+			productName = Toast;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9D2537812A9C7F9B009D23A7 /* Project object */;
 }
