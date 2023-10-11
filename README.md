@@ -1,8 +1,14 @@
-# Attachments
+# SwiftUI Attachments 
 
 Integrated attachment functionality to enable seamless handling of `images`, `videos`, `audio`, and `documents` within the mobile app.
 Implemented a robust file manager system to persist these attachments and enable
 smooth previewing within the application.
+
+Supported File Type: 
+`.image`, `.video`, `.movie`, `.pdf`, `.text`, `.plainText`, `.spreadsheet`, `.svg`, `.audio`, `.zip`, `.gif`, `.wav`, `.aac`, `.mp3`, `.mpeg4Audio`, `.mpeg4Movie`,
+`.jpg`, `.jpeg`, `.png`, `.wav`, `.docx`, `.doc`, `.xls`, `.xlsx`, `.pptx`, `.ppt`, `.mov`, `.m4a`, `.m4v`, `.mkv`, `.heif`
+
+  
 
 **Example GIF Video**
 
