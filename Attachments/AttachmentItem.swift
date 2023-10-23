@@ -122,10 +122,10 @@ struct AttachmentItem {
       case .movie, .mpeg4Movie, .mpeg, .mpeg2Video,
           .video, .quickTimeMovie: string = "video"
       case .pdf: string =  "doc"
-      case .mp3, .wav: string = "dot.radiowaves.left.and.right"
+      case .mp3, .wav, .mpeg4Audio, .audio: string = "dot.radiowaves.left.and.right"
       case .text, .plainText, .rtf: string = "doc.text"
       default:
-        if type.identifier == "m4a" {
+        if string == UTType(filenameExtension: "m4a")?.description {
           string = "dot.radiowaves.left.and.right"
         } else {
           string = "questionmark.folder"
