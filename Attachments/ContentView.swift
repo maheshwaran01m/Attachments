@@ -29,14 +29,14 @@ struct ContentView: View {
   @ViewBuilder
   private var contentView: some View {
     if !viewModel.attachments.isEmpty {
-      List(viewModel.attachments, id: \.privateID) { item in
+      List($viewModel.attachments, id: \.privateID) { item in
         AttachmentDetailView(
-          item.fileName ?? "",
-          imageStyle: item.getThumbImage) {
-            viewModel.delete(item.privateID)
+          item.wrappedValue.fileName ?? "",
+          imageStyle: item.wrappedValue.getThumbImage) {
+            viewModel.delete(item.wrappedValue.privateID)
           }
           .onTapGesture {
-            viewModel.quickLookURL = URL(filePath: item.localFilePath)
+            viewModel.quickLookURL = URL(filePath: item.wrappedValue.localFilePath)
           }
           .quickLookPreview($viewModel.quickLookURL, in: viewModel.attachmentURLs)
           .listRowSeparator(.hidden)
@@ -81,8 +81,7 @@ struct ContentView: View {
       } label: {
         Image(systemName: "plus")
       }
-      .confirmationDialog("Choose Attachments", isPresented: $viewModel.showAttachmentDialog,
-                          actions: confirmationDialogActions)
+      .confirmationDialog("Choose Attachments", isPresented: $viewModel.showAttachmentDialog, titleVisibility: .visible, actions: confirmationDialogActions)
       
       .photosPicker(isPresented: $viewModel.showPhoto, selection: $viewModel.photoPicker,
                     matching: viewModel.allowedImageType)
