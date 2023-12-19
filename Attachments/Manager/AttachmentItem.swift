@@ -15,7 +15,7 @@ struct AttachmentItem {
   var privateID: String?
   var fileName: String?
   var fileExtension: String?
-  var folderName: String?
+  var folderPath: String?
   var url: URL?
   var localPath: String?
   var createdDate: String?
@@ -23,8 +23,8 @@ struct AttachmentItem {
   
   var directory: String {
     let directory = URL.documentsDirectory
-    guard let folderName, let id = id ?? privateID else { return directory.path() }
-    let finalPath = directory.path() + folderName + "/\(id)"
+    guard let folderPath, let id = id ?? privateID else { return directory.path() }
+    let finalPath = directory.path() + folderPath + "/\(id)"
     
     return finalPath
   }
@@ -153,55 +153,5 @@ struct AttachmentItem {
         print("Error while generating thumbnail: \(error)")
       }
     }
-  }
-}
-
-struct AttachmentManager {
-  
-  private let fileManager = FileManager.default
-  private let documentURL = URL.documentsDirectory
-  
-  func attachmentFolder(for folderName: String? = nil, privateID: String) -> URL? {
-    if let folderName {
-      return FileManager.default.create(named: privateID, folder: folderName)
-    }
-    return FileManager.default.create(named: privateID, folder: folderName ?? UUID().uuidString)
-  }
-  
-  func saveImage(_ image: UIImage, fileName: String? = nil, folderName: String?,
-                 privateID: String = UUID().uuidString) -> AttachmentItem? {
-    
-    guard let folderURL = attachmentFolder(for: folderName, privateID: privateID),
-          let jpgData = image.jpegData(compressionQuality: 0.8) else {
-      return nil
-    }
-    let fileName = fileName ?? "Image"
-    let finalPath = folderURL.path() + "/" + fileName + ".jpeg"
-    
-    fileManager.write(jpgData, atPath: finalPath)
-    
-    return .init(privateID: privateID, fileName: fileName, fileExtension: "jpeg",
-                 folderName: folderName, localPath: finalPath)
-  }
-  
-  func saveFile(_ fileURL: URL, fileName: String? = nil, fileType: String?,
-                folderName: String?, privateID: String = UUID().uuidString) -> AttachmentItem? {
-    guard let folderURL = attachmentFolder(for: folderName, privateID: privateID) else {
-      return nil
-    }
-    let fileName = fileName ?? fileURL.deletingPathExtension().lastPathComponent
-    let finalPath = folderURL.path() + "/" + fileName + "." + fileURL.pathExtension
-    do {
-      let data = try Data(contentsOf: fileURL)
-      fileManager.write(data, atPath: finalPath)
-    } catch {
-      print("Failed to convert data from Path: \(finalPath)")
-    }
-    return .init(privateID: privateID, fileName: fileName, fileExtension: fileURL.pathExtension,
-                 folderName: folderName, localPath: finalPath)
-  }
-  
-  var getTimeStamp: String {
-    return String(describing: Int64(Date().timeIntervalSince1970 * 1000))
   }
 }

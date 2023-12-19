@@ -21,38 +21,19 @@ class AttachmentViewModel: ObservableObject {
   }
   @Published var selectedImage: UIImage? {
     didSet {
-      if let uiImage = selectedImage,
-         let attachment = self.attachmentManager.saveImage(uiImage, folderName: self.folderName) {
-        DispatchQueue.main.async {
-          self.attachments.append(attachment)
-        }
-      }
+      handleAttachmentFile(for: .image(selectedImage), isFromImageEdit: true)
     }
   }
   @Published var selectedVideo: URL? {
     didSet {
-      if let url = selectedVideo,
-         let attachment = self.attachmentManager.saveFile(
-          url, fileType: url.pathExtension, folderName: self.folderName) {
-        DispatchQueue.main.async {
-          self.attachments.append(attachment)
-        }
-      }
+      handleAttachmentFile(for: .file(selectedVideo))
     }
   }
   
-  @Published public var audioAttachmentItem: QuickLookItem? {
+  @Published public var audioAttachmentItem: URL? {
     didSet {
-      if let audioAttachmentItem, let url = audioAttachmentItem.url {
-        let attachment = AttachmentItem(
-          privateID: audioAttachmentItem.id,
-          fileName: audioAttachmentItem.fileName ?? audioAttachmentItem.url?.deletingPathExtension().lastPathComponent,
-          fileExtension: audioAttachmentItem.url?.pathExtension,
-          folderName: folderName, localPath: url.path())
-        
-        DispatchQueue.main.async {
-          self.attachments.append(attachment)
-        }
+      if let audioAttachmentItem {
+        generateAttachmentItem(for: audioAttachmentItem)
       }
     }
   }
@@ -75,19 +56,22 @@ class AttachmentViewModel: ObservableObject {
   }
   
   @Published var quickLookEdit = false
-  @Published var selectedQuickLookItem: QuickLookItem? {
+  @Published var selectedQuickLookItem: URL? {
     didSet {
       if let selectedQuickLookItem {
-        self.addAttachmentItem(for: selectedQuickLookItem.fileName)
+        generateAttachmentItem(for: selectedQuickLookItem)
       }
     }
   }
+  
+  @Published public var fileName = ""
+  @Published public var showFileNameAlert = false
   
   @Published var showToast: ToastMessage?
   
   private (set) var selectedAttachmentItem: AttachmentItem?
   private let fileManager = FileManager.default
-  let attachmentManager = AttachmentManager()
+  let attachmentManager = AttachmentManager(.downloads)
   private let folderName: String
   
   init(folderName: String = "Files") {
@@ -116,12 +100,8 @@ class AttachmentViewModel: ObservableObject {
       Task {
         switch result {
         case .success(let data):
-          if let uiImage = data?.image,
-             let attachment = self.attachmentManager.saveImage(uiImage, folderName: self.folderName) {
-            self.selectedAttachmentItem = attachment
-            DispatchQueue.main.async {
-                self.quickLookEdit = true
-            }
+          if let image = data?.image {
+            self.handleAttachmentFile(for: .image(image), isFromImageEdit: true)
           }
         case .failure(let error):
           print("Failed to import Image \(error)")
@@ -138,14 +118,11 @@ class AttachmentViewModel: ObservableObject {
       Task {
         switch result {
         case .success(let file):
-          if let url = file?.url,
-             let attachment = self.attachmentManager.saveFile(
-              url, fileType: url.pathExtension, folderName: self.folderName) {
-            DispatchQueue.main.async {
-              self.attachments.append(attachment)
+          if let url = file?.url {
+            self.handleAttachmentFile(for: .file(url)) {
+              // Delete the temp file
+              FileManager.default.remove(atURL: url)
             }
-            // Delete the temp file
-            FileManager.default.remove(atURL: url)
           }
         case .failure(let error):
           print("Failed to import Video \(error)")
@@ -188,16 +165,11 @@ class AttachmentViewModel: ObservableObject {
     switch result {
     case.success(let url):
       if url.startAccessingSecurityScopedResource() {
-        DispatchQueue.main.async { [weak self] in
-          guard let self else { return }
-          if let attachment = self.attachmentManager.saveFile(
-            url, fileType: url.pathExtension, folderName: self.folderName) {
-            self.attachments.append(attachment)
-          }
+        handleAttachmentFile(for: .file(url)) {
+          url.stopAccessingSecurityScopedResource()
         }
-        url.stopAccessingSecurityScopedResource()
       } else {
-        print("Failed to import file")
+        setToast("Failed to import file")
       }
       
     case .failure(let error):
@@ -226,6 +198,46 @@ class AttachmentViewModel: ObservableObject {
       }
     }
     self.selectedAttachmentItem = nil
+  }
+  
+  func handleAttachmentFile(for type: AttachmentManager.AttachmentType,
+                                     isFromImageEdit: Bool = false,
+                                     completion: (() -> Void)? = nil) {
+     attachmentManager.handleAttachment(for: type) { [weak self] result in
+       switch result {
+       case .success(let attachmentItem):
+         self?.selectedAttachmentItem = attachmentItem
+         DispatchQueue.main.async {
+           if isFromImageEdit {
+             self?.quickLookEdit = true
+           } else {
+             self?.showFileNameAlert = true
+           }
+         }
+         completion?()
+       case .failure(let error):
+         self?.setToast(error.message)
+         completion?()
+       }
+     }
+   }
+  
+  func generateAttachmentItem(for url: URL?) {
+    guard let url,
+          let attachmentItem = attachmentManager.generateAttachmentItem(for: url) else { return }
+    if showFileNameAlert {
+      showFileNameAlert = false
+    }
+    selectedAttachmentItem = attachmentItem
+    DispatchQueue.main.async {
+      self.showFileNameAlert = true
+    }
+  }
+  
+  func setToast(_ message: String, style: Color = .blue) {
+    DispatchQueue.main.async {
+      self.showToast = ToastMessage(message, style: style)
+    }
   }
   
   // MARK: - Camera
@@ -293,4 +305,27 @@ public enum AttachmentAlertItem: CaseIterable, Identifiable {
     }
   }
   public var id: String { title }
+}
+
+extension AttachmentViewModel {
+  
+  func attachmentFileNameAction(for type: AttachmentAlertItem) {
+    setFileNameAlert(show: false)
+    switch type {
+    case .save:
+      if !fileName.isEmpty {
+        addAttachmentItem(for: fileName)
+      } else {
+        setFileNameAlert(show: true)
+      }
+    case .skip:
+      addAttachmentItem()
+    }
+  }
+  
+  private func setFileNameAlert(show: Bool) {
+    DispatchQueue.main.async {
+      self.showFileNameAlert = show
+    }
+  }
 }

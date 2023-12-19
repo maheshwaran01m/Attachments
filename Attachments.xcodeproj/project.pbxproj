@@ -19,6 +19,10 @@
 		9D4C52E92ABEA4A400025D3B /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = 9D4C52E82ABEA4A400025D3B /* Toast */; };
 		9D4E457E2AB54032003B0C11 /* AudioRecorderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4E457D2AB54032003B0C11 /* AudioRecorderViewModel.swift */; };
 		9DB0D7F72AB3EB5F00DE334D /* QuickLookEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB0D7F62AB3EB5F00DE334D /* QuickLookEditorView.swift */; };
+		9DBC71DF2B31F62F00AB47AC /* AttachmentFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBC71DE2B31F62F00AB47AC /* AttachmentFormat.swift */; };
+		9DBC71E12B31F64500AB47AC /* AttachmentFileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBC71E02B31F64500AB47AC /* AttachmentFileType.swift */; };
+		9DBC71E32B31F66000AB47AC /* AttachmentError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBC71E22B31F66000AB47AC /* AttachmentError.swift */; };
+		9DBC71E52B31F78800AB47AC /* AttachmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBC71E42B31F78800AB47AC /* AttachmentManager.swift */; };
 		9DCF57CE2A9EEDF40098EB92 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */; };
 		9DCF57D02A9F51FC0098EB92 /* AudioRecorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCF57CF2A9F51FC0098EB92 /* AudioRecorderView.swift */; };
 /* End PBXBuildFile section */
@@ -36,6 +40,10 @@
 		9D48ECBF2AB1FC7100EC68FC /* ImageEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageEditorView.swift; sourceTree = "<group>"; };
 		9D4E457D2AB54032003B0C11 /* AudioRecorderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderViewModel.swift; sourceTree = "<group>"; };
 		9DB0D7F62AB3EB5F00DE334D /* QuickLookEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLookEditorView.swift; sourceTree = "<group>"; };
+		9DBC71DE2B31F62F00AB47AC /* AttachmentFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentFormat.swift; sourceTree = "<group>"; };
+		9DBC71E02B31F64500AB47AC /* AttachmentFileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentFileType.swift; sourceTree = "<group>"; };
+		9DBC71E22B31F66000AB47AC /* AttachmentError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentError.swift; sourceTree = "<group>"; };
+		9DBC71E42B31F78800AB47AC /* AttachmentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentManager.swift; sourceTree = "<group>"; };
 		9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		9DCF57CF2A9F51FC0098EB92 /* AudioRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -75,12 +83,9 @@
 				9D25378E2A9C7F9B009D23A7 /* ContentView.swift */,
 				9D25379D2A9C8226009D23A7 /* AttachmentViewModel.swift */,
 				9D25379B2A9C8053009D23A7 /* AttachmentDetailView.swift */,
-				9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */,
+				9DBC71E72B31FB4900AB47AC /* Editor */,
+				9DBC71E62B31FB3400AB47AC /* Manager */,
 				9D4E457C2AB5401F003B0C11 /* Audio */,
-				9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */,
-				9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */,
-				9DB0D7F62AB3EB5F00DE334D /* QuickLookEditorView.swift */,
-				9D48ECBF2AB1FC7100EC68FC /* ImageEditorView.swift */,
 			);
 			path = Attachments;
 			sourceTree = "<group>";
@@ -110,6 +115,29 @@
 				9D4E457D2AB54032003B0C11 /* AudioRecorderViewModel.swift */,
 			);
 			path = Audio;
+			sourceTree = "<group>";
+		};
+		9DBC71E62B31FB3400AB47AC /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				9DBC71E22B31F66000AB47AC /* AttachmentError.swift */,
+				9DBC71E02B31F64500AB47AC /* AttachmentFileType.swift */,
+				9DBC71DE2B31F62F00AB47AC /* AttachmentFormat.swift */,
+				9D2537A12A9CB929009D23A7 /* AttachmentItem.swift */,
+				9DBC71E42B31F78800AB47AC /* AttachmentManager.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
+		9DBC71E72B31FB4900AB47AC /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				9DCF57CD2A9EEDF40098EB92 /* ImagePickerView.swift */,
+				9D25379F2A9CB3FA009D23A7 /* FileManager+Extensions.swift */,
+				9DB0D7F62AB3EB5F00DE334D /* QuickLookEditorView.swift */,
+				9D48ECBF2AB1FC7100EC68FC /* ImageEditorView.swift */,
+			);
+			path = Editor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -193,8 +221,12 @@
 				9D25379E2A9C8226009D23A7 /* AttachmentViewModel.swift in Sources */,
 				9D2537A02A9CB3FA009D23A7 /* FileManager+Extensions.swift in Sources */,
 				9D2537A22A9CB929009D23A7 /* AttachmentItem.swift in Sources */,
+				9DBC71E52B31F78800AB47AC /* AttachmentManager.swift in Sources */,
 				9DCF57CE2A9EEDF40098EB92 /* ImagePickerView.swift in Sources */,
 				9DCF57D02A9F51FC0098EB92 /* AudioRecorderView.swift in Sources */,
+				9DBC71E32B31F66000AB47AC /* AttachmentError.swift in Sources */,
+				9DBC71E12B31F64500AB47AC /* AttachmentFileType.swift in Sources */,
+				9DBC71DF2B31F62F00AB47AC /* AttachmentFormat.swift in Sources */,
 				9D25378F2A9C7F9B009D23A7 /* ContentView.swift in Sources */,
 				9D25378D2A9C7F9B009D23A7 /* AttachmentsApp.swift in Sources */,
 				9DB0D7F72AB3EB5F00DE334D /* QuickLookEditorView.swift in Sources */,
