@@ -13,15 +13,13 @@ struct AudioRecorderView: View {
   @Environment(\.dismiss) private var dismiss
   
   @StateObject private var viewModel: AudioRecorderViewModel
-  @Binding var selectedItem: QuickLookItem?
+  @Binding var selectedURL: URL?
   
-  init(_ selectedItem: Binding<QuickLookItem?>,
+  init(_ selectedURL: Binding<URL?>,
        manager: AttachmentManager) {
-    _viewModel = StateObject(wrappedValue: .init(manager, privateID: selectedItem.wrappedValue?.id ?? UUID().uuidString))
-    _selectedItem = selectedItem
+    _viewModel = StateObject(wrappedValue: .init(manager))
+    _selectedURL = selectedURL
   }
-  
-  @State private var audioURLs: [URL] = []
   
   var body: some View {
     NavigationStack {
@@ -34,9 +32,6 @@ struct AudioRecorderView: View {
       .background(Color.black)
       .navigationTitle("Record audio")
       .navigationBarTitleDisplayMode(.inline)
-      .alert("Add File Name",
-             isPresented: $viewModel.showFileNameAlert,
-             actions: attachmentFileNameAction)
       .toolbar {
         saveButton
         cancelButton
@@ -98,25 +93,11 @@ struct AudioRecorderView: View {
     .disabled(viewModel.isRecording)
   }
   
-  
-  @ViewBuilder
-  private func attachmentFileNameAction() -> some View {
-    TextField("Enter FileName", text: $viewModel.fileName)
-    ForEach(AttachmentAlertItem.allCases) { button in
-      Button(button.title) {
-        viewModel.attachmentFileNameAction(for: button) { fileName in
-          viewModel.clearAudioSessions()
-          selectedItem = .init(url: viewModel.fileURL, fileName: fileName)
-          dismiss()
-        }
-      }
-    }
-  }
-  
   private var saveButton: some ToolbarContent {
     ToolbarItem(placement: .navigationBarTrailing) {
       Button("Save") {
-        viewModel.showFileNameAlert = true
+        selectedURL = viewModel.fileURL
+        dismiss()
       }
     }
   }
@@ -124,6 +105,7 @@ struct AudioRecorderView: View {
   private var cancelButton: some ToolbarContent {
     ToolbarItem(placement: .navigationBarLeading) {
       Button {
+        viewModel.removeAudioFile()
         dismiss()
       } label: {
         Image(systemName: "chevron.left")
@@ -133,8 +115,8 @@ struct AudioRecorderView: View {
 }
 
 struct AudioRecorderView_Previews: PreviewProvider {
-  @State static private var selectedItem: QuickLookItem?
+  @State static private var selectedItem: URL?
   static var previews: some View {
-    AudioRecorderView($selectedItem, manager: .init())
+    AudioRecorderView($selectedItem, manager: .init(.downloads))
   }
 }

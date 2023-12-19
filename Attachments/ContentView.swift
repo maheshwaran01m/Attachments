@@ -108,10 +108,13 @@ struct ContentView: View {
       }
       .sheet(isPresented: $viewModel.quickLookEdit) {
         if let path = viewModel.selectedAttachmentItem?.localFilePath, !path.isEmpty {
-          QuickLookEditorView(url: .init(filePath: path),
-                              selectedItem: $viewModel.selectedQuickLookItem)
+          QuickLookEditorView(isPresented: $viewModel.quickLookEdit, url: .init(filePath: path),
+                              selectedURL: $viewModel.selectedQuickLookItem)
         }
       }
+      .alert("Add File Name",
+             isPresented: $viewModel.showFileNameAlert,
+             actions: attachmentFileNameAction)
     }
   }
   
@@ -135,6 +138,16 @@ struct ContentView: View {
     
     Button("Documents") {
       viewModel.showFiles.toggle()
+    }
+  }
+  
+  @ViewBuilder
+  private func attachmentFileNameAction() -> some View {
+    TextField("Enter FileName", text: $viewModel.fileName)
+    ForEach(AttachmentAlertItem.allCases) { button in
+      Button(button.title) {
+        viewModel.attachmentFileNameAction(for: button)
+      }
     }
   }
 }

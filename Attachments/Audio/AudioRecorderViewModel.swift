@@ -24,15 +24,15 @@ class AudioRecorderViewModel: NSObject, ObservableObject {
   
   let manager: AttachmentManager
   
-  init(_ manager: AttachmentManager, privateID: String) {
+  init(_ manager: AttachmentManager) {
     self.manager = manager
     super.init()
-    configureFileURL(for: manager, privateID: privateID)
+    configureFileURL(for: manager)
     activateAudioSession()
   }
   
-  private func configureFileURL(for manger: AttachmentManager, privateID: String) {
-    guard let url = manager.attachmentFolder(for: "Files", privateID: privateID) else { return }
+  private func configureFileURL(for manger: AttachmentManager) {
+    guard let url = manager.attachmentFolder(for: UUID().uuidString) else { return }
     fileURL = url.appending(path: manager.getTimeStamp).appendingPathExtension("m4a")
   }
   
