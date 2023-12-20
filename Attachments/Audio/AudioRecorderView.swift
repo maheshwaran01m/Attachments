@@ -14,6 +14,7 @@ struct AudioRecorderView: View {
   
   @StateObject private var viewModel: AudioRecorderViewModel
   @Binding var selectedURL: URL?
+  @State private var isAudioSaved = false
   
   init(_ selectedURL: Binding<URL?>,
        manager: AttachmentManager) {
@@ -36,6 +37,8 @@ struct AudioRecorderView: View {
         saveButton
         cancelButton
       }
+      .interactiveDismissDisabled()
+      .onDisappear(perform: updateAttachmentURL)
     }
   }
   
@@ -96,7 +99,7 @@ struct AudioRecorderView: View {
   private var saveButton: some ToolbarContent {
     ToolbarItem(placement: .navigationBarTrailing) {
       Button("Save") {
-        selectedURL = viewModel.fileURL
+        isAudioSaved = true
         dismiss()
       }
     }
@@ -110,6 +113,13 @@ struct AudioRecorderView: View {
       } label: {
         Image(systemName: "chevron.left")
       }
+    }
+  }
+  
+  private func updateAttachmentURL() {
+    if isAudioSaved {
+      selectedURL = viewModel.fileURL
+      isAudioSaved = false
     }
   }
 }

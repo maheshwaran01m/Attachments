@@ -197,6 +197,7 @@ class AttachmentViewModel: ObservableObject {
         self.attachments.append(attachmentItem)
       }
     }
+    self.fileName = ""
     self.selectedAttachmentItem = nil
   }
   
