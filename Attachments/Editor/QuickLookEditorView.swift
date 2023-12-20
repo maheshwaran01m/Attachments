@@ -44,6 +44,7 @@ class QuickLookViewController: QLPreviewController {
   private var selectedURL: (URL?) -> Void
   private let url: URL?
   private var localURL: URL?
+  private var alertController: UIAlertController?
   
   lazy var cancelButton: UIBarButtonItem = {
     .init(image: UIImage(systemName: "chevron.backward"),
@@ -77,7 +78,6 @@ class QuickLookViewController: QLPreviewController {
   }
   
   private func setupNavigationBarItems() {
-    print("[m] Button: \(self.navigationItem.rightBarButtonItems?.description ?? "")")
     if let rightBarButtons = self.navigationItem.rightBarButtonItems,
        !rightBarButtons.isEmpty, rightBarButtons.contains(
         where: { $0.image?.description.contains("pencil.tip.crop.circle.on") ?? false }) {
@@ -103,7 +103,7 @@ extension QuickLookViewController {
   }
   
   @objc private func showSaveAlert() {
-    showPopupForDiscardAlert(isFromSave: true)
+    addAttachmentItem()
   }
   
   private func clearButtonClicked() {
@@ -121,45 +121,37 @@ extension QuickLookViewController {
 
 extension QuickLookViewController {
   
-  public func showPopupForDiscardAlert(isFromSave: Bool = false) {
+  public func showPopupForDiscardAlert() {
+    guard alertController == nil else { return }
     let message = "Attachment File will be discarded. Do you wish to proceed?"
-    let editMessage = "Complete editing before saving the attachment file, otherwise edited changes will be discarded"
-    
-    let alert = UIAlertController(
+    alertController = UIAlertController(
       title: "Warning",
-      message: isFromSave ? editMessage : message,
+      message: message,
       preferredStyle: .alert)
     
     // Back Button Action
     let proceedAction = UIAlertAction(title: "Proceed",
                                       style: .destructive) { [weak self] _ in
       self?.deleteAttachmentFolder()
+      self?.alertController = nil
     }
     
     let discardAction = UIAlertAction(title: "Discard Changes", style: .default) { [weak self] _ in
       self?.clearButtonClicked()
+      self?.alertController = nil
     }
     
-    // Save Action
-    let saveAction = UIAlertAction(title: "Save", style: .default) { [weak self] _ in
-      self?.addAttachmentItem()
+    let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
+      self?.alertController?.dismiss(animated: true)
+      self?.alertController = nil
     }
+    alertController?.addAction(proceedAction)
+    alertController?.addAction(discardAction)
+    alertController?.preferredAction = proceedAction
     
-    let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
-      alert.dismiss(animated: true)
-    }
-    
-    if isFromSave {
-      alert.addAction(saveAction)
-      alert.preferredAction = saveAction
-    } else {
-      alert.addAction(proceedAction)
-      alert.addAction(discardAction)
-      alert.preferredAction = proceedAction
-    }
-    alert.addAction(cancelAction)
-    
-    self.present(alert, animated: true)
+    alertController?.addAction(cancelAction)
+    guard let alertController else { return }
+    self.present(alertController, animated: true)
   }
 }
 
