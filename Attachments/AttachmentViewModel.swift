@@ -71,24 +71,10 @@ class AttachmentViewModel: ObservableObject {
   
   private (set) var selectedAttachmentItem: AttachmentItem?
   private let fileManager = FileManager.default
-  let attachmentManager = AttachmentManager(.downloads)
-  private let folderName: String
+  let attachmentManager: AttachmentManager
   
-  init(folderName: String = "Files") {
-    self.folderName = folderName
-  }
-  
-  var allowedFileType: [UTType] {
-    [.image, .video, .movie, .pdf, .text, .plainText, .spreadsheet,
-     .presentation, .mpeg4Movie, .mpeg4Audio,  .init(filenameExtension: "m4a") ?? .audio]
-  }
-  
-  var allowedImageType: PHPickerFilter {
-    .any(of: [.images, .screenshots, .depthEffectPhotos])
-  }
-  
-  var allowedVideoType: PHPickerFilter {
-    .any(of: [.videos, .screenRecordings, .slomoVideos])
+  init(directory: AttachmentManager.AttachmentDirectory = .downloads) {
+    self.attachmentManager = .init(directory)
   }
   
   // MARK: - Custom Methods
@@ -230,7 +216,7 @@ class AttachmentViewModel: ObservableObject {
       showFileNameAlert = false
     }
     selectedAttachmentItem = attachmentItem
-    DispatchQueue.main.async {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
       self.showFileNameAlert = true
     }
   }

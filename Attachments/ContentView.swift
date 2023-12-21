@@ -84,9 +84,9 @@ struct ContentView: View {
       .confirmationDialog("Choose Attachments", isPresented: $viewModel.showAttachmentDialog, titleVisibility: .visible, actions: confirmationDialogActions)
       
       .photosPicker(isPresented: $viewModel.showPhoto, selection: $viewModel.photoPicker,
-                    matching: viewModel.allowedImageType)
+                    matching: viewModel.attachmentManager.allowedPhotoLibraryType)
       
-      .fileImporter(isPresented: $viewModel.showFiles, allowedContentTypes: viewModel.allowedFileType, onCompletion: viewModel.fileAction(_:))
+      .fileImporter(isPresented: $viewModel.showFiles, allowedContentTypes: viewModel.attachmentManager.allowedFileType, onCompletion: viewModel.fileAction(_:))
       
       .fullScreenCover(isPresented: $viewModel.showCamera) {
         ImagePickerView(viewModel.sourceType, selectedImage: $viewModel.selectedImage,
@@ -105,11 +105,14 @@ struct ContentView: View {
         AudioRecorderView($viewModel.audioAttachmentItem,
                           manager: viewModel.attachmentManager)
           .presentationDetents([.medium])
+          .interactiveDismissDisabled()
       }
       .sheet(isPresented: $viewModel.quickLookEdit) {
         if let path = viewModel.selectedAttachmentItem?.localFilePath, !path.isEmpty {
-          QuickLookEditorView(isPresented: $viewModel.quickLookEdit, url: .init(filePath: path),
-                              selectedURL: $viewModel.selectedQuickLookItem)
+          QuickLookEditorView(
+            isPresented: $viewModel.quickLookEdit,
+            url: .init(filePath: path),
+            selectedURL: $viewModel.selectedQuickLookItem)
         }
       }
       .alert("Add File Name",
