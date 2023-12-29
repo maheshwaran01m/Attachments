@@ -59,6 +59,7 @@ class AttachmentViewModel: ObservableObject {
   @Published var selectedQuickLookItem: URL? {
     didSet {
       if let selectedQuickLookItem {
+        quickLookEdit = false
         generateAttachmentItem(for: selectedQuickLookItem)
       }
     }
