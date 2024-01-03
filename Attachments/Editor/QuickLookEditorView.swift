@@ -81,12 +81,17 @@ public struct QuickLookEditorView: UIViewControllerRepresentable {
     
     private func checkAndUpdate(_ saveButton: UIBarButtonItem) {
       
-      guard let rightBarButtons = self.navigationItem.rightBarButtonItems,
+      guard let rightBarButtons = navigationItem.rightBarButtonItems,
             !rightBarButtons.isEmpty else {
-        if self.navigationItem.rightBarButtonItem == nil {
-          self.navigationItem.rightBarButtonItem = saveButton
+        if navigationItem.rightBarButtonItem == nil {
+          navigationItem.rightBarButtonItem = saveButton
         }
         return
+      }
+      
+      if navigationItem.rightBarButtonItem?.title != saveButton.title &&
+          !(navigationItem.rightBarButtonItems?.contains(where: { $0.title == saveButton.title }) ?? false) {
+        navigationItem.rightBarButtonItems?.append(saveButton)
       }
       guard let editIcon = rightBarButtons.first(
         where: { $0.accessibilityIdentifier == "QLOverlayMarkupButtonAccessibilityIdentifier"}) else {
@@ -95,7 +100,7 @@ public struct QuickLookEditorView: UIViewControllerRepresentable {
       guard let image = editIcon.image else { return }
       
       if image.description.contains("pencil.tip.crop.circle.on") {
-        self.navigationItem.rightBarButtonItems?.removeAll(where: { $0.title == saveButton.title })
+        navigationItem.rightBarButtonItems?.removeAll(where: { $0.title == saveButton.title })
       } else {
         guard !image.description.contains("pencil.tip.crop.circle") else {
           return
