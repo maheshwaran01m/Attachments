@@ -35,7 +35,7 @@ struct AttachmentItem {
         return localPath
       } else {
         let split = localPath.split(separator: "Documents/")
-        let filePath = URL.documentsDirectory.path() + split[0]
+        let filePath = URL.documentsDirectory.path() + split[1]
         return filePath
       }
     } else {

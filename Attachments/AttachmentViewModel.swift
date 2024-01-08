@@ -189,26 +189,26 @@ class AttachmentViewModel: ObservableObject {
   }
   
   func handleAttachmentFile(for type: AttachmentManager.AttachmentType,
-                                     isFromImageEdit: Bool = false,
-                                     completion: (() -> Void)? = nil) {
-     attachmentManager.handleAttachment(for: type) { [weak self] result in
-       switch result {
-       case .success(let attachmentItem):
-         self?.selectedAttachmentItem = attachmentItem
-         DispatchQueue.main.async {
-           if isFromImageEdit {
-             self?.quickLookEdit = true
-           } else {
-             self?.showFileNameAlert = true
-           }
-         }
-         completion?()
-       case .failure(let error):
-         self?.setToast(error.message)
-         completion?()
-       }
-     }
-   }
+                            isFromImageEdit: Bool = false,
+                            completion: (() -> Void)? = nil) {
+    attachmentManager.handleAttachment(for: type) { [weak self] result in
+      switch result {
+      case .success(let attachmentItem):
+        self?.selectedAttachmentItem = attachmentItem
+        DispatchQueue.main.async {
+          if isFromImageEdit {
+            self?.quickLookEdit = true
+          } else {
+            self?.showFileNameAlert = true
+          }
+        }
+        completion?()
+      case .failure(let error):
+        self?.setToast(error.message)
+        completion?()
+      }
+    }
+  }
   
   func generateAttachmentItem(for url: URL?) {
     guard let url,
