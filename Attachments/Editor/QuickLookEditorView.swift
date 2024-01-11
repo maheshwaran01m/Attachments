@@ -25,189 +25,211 @@ public struct QuickLookEditorView: UIViewControllerRepresentable {
   }
   
   public func makeUIViewController(context: Context) -> UIViewController {
-    return UINavigationController(rootViewController: QuickLookCoordinator(self))
+    let vc = QuickLookEditorVC(for: url, localURL: localURL) { isEnabled in
+      if isEnabled {
+        selectedURL = url
+      }
+      dismiss()
+    }
+    return UINavigationController(rootViewController: vc)
   }
   
   public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+// MARK: - QuickLookEditorVC
+
+class QuickLookEditorVC: UIViewController {
   
-  public class QuickLookCoordinator: QLPreviewController,
-                                     QLPreviewControllerDataSource,
-                                     QLPreviewControllerDelegate {
+  private let url: URL?
+  private var localURL: URL?
+  private var preview: QLPreviewController?
+  private var alertController: UIAlertController?
+  private var isFromDiscard = false
+  
+  private var canSaveImage: (Bool) -> Void
+  
+  init(for url: URL?, localURL: URL?, canSaveImage: @escaping (Bool) -> Void) {
+    self.url = url
+    self.canSaveImage = canSaveImage
+    self.localURL = localURL
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  required init?(coder: NSCoder) {
+    url = nil
+    canSaveImage = { _ in }
+    super.init(coder: coder)
+  }
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .systemBackground
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    setupQuickLook()
+  }
+  
+  private func setupQuickLook() {
+    guard preview == nil else { return }
+    let preview = QLPreviewController()
+    preview.delegate = self
+    preview.dataSource = self
+    preview.currentPreviewItemIndex = 0
+    self.preview = preview
+    setupNavigationBarItems()
     
-    public var parentView: QuickLookEditorView
+    navigationController?.present(preview, animated: false)
+  }
+  
+  private func setupNavigationBarItems() {
+    let cancelButton = UIBarButtonItem(
+      image: UIImage(systemName: "chevron.backward"),
+      style: .plain, target: self,
+      action: #selector(showDiscardAlert))
     
-    public init(_ parentView: QuickLookEditorView) {
-      self.parentView = parentView
-      super.init(nibName: nil, bundle: nil)
+    preview?.navigationItem.leftBarButtonItem = cancelButton
+  }
+}
+
+// MARK: - QLPreviewControllerDataSource
+
+extension QuickLookEditorVC: QLPreviewControllerDelegate, QLPreviewControllerDataSource {
+  
+  func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
+    return 1
+  }
+  
+  func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
+    PreviewItem(url: localURL, title: localURL?.lastPathComponent ?? "")
+  }
+  
+  // MARK: - QLPreviewControllerDelegate
+  
+  func previewController(_ controller: QLPreviewController,
+                         editingModeFor previewItem: QLPreviewItem) -> QLPreviewItemEditingMode {
+    .updateContents
+  }
+  
+  func previewControllerWillDismiss(_ controller: QLPreviewController) {
+    addAttachmentItem()
+  }
+}
+
+extension QuickLookEditorVC {
+  
+  // MARK: - NavigationItem
+  
+  @objc private func showDiscardAlert() {
+    showPopupForDiscardAlert()
+  }
+  
+  @objc private func showSaveAlert() {
+    addAttachmentItem()
+  }
+  
+  private func addAttachmentItem() {
+    guard !isFromDiscard else { return }
+    deleteAttachmentFile()
+    dismissVC()
+    canSaveImage(true)
+  }
+  
+  private func dismissVC() {
+    navigationController?.dismiss(animated: false)
+  }
+  
+  // MARK: - Discard Alert
+  
+  public func showPopupForDiscardAlert() {
+    guard alertController == nil else { return }
+    let message = "Attachment File will be discarded. Do you wish to proceed?"
+    
+    let alert = UIAlertController(
+      title: "Warning",
+      message: message,
+      preferredStyle: .alert)
+    
+    // Back Button Action
+    let proceedAction = UIAlertAction(title: "Proceed",
+                                      style: .destructive) { [weak self] _ in
+      self?.isFromDiscard = true
+      self?.resetAlertController()
+      self?.deleteAttachmentFolder()
     }
     
-    required init?(coder: NSCoder) {
-      parentView = .init(nil, selectedURL: .constant(.none))
-      super.init(coder: coder)
+    let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
+      alert.dismiss(animated: true)
+      self?.resetAlertController()
     }
     
-    public override func viewDidLoad() {
-      super.viewDidLoad()
-      setupQuickLook()
-    }
-    
-    public override func viewDidLayoutSubviews() {
-      super.viewDidLayoutSubviews()
-      setupNavigationBarItems()
-    }
-    
-    private func setupQuickLook() {
-      self.delegate = self
-      self.dataSource = self
-      self.currentPreviewItemIndex = 0
-    }
-    
-    private func setupNavigationBarItems() {
-      
-      let cancelButton = UIBarButtonItem(
-        image: UIImage(systemName: "chevron.backward"),
-        style: .plain, target: self,
-        action: #selector(showDiscardAlert))
-      
-      let saveButton = UIBarButtonItem(
-        title: "Save", style: .plain, target: self,
-        action: #selector(showSaveAlert))
-      
-      if self.navigationItem.leftBarButtonItem == nil {
-        self.navigationItem.leftBarButtonItem = cancelButton
+    alert.addAction(proceedAction)
+    alert.preferredAction = proceedAction
+    alert.addAction(cancelAction)
+    alertController = alert
+    preview?.present(alert, animated: true)
+  }
+  
+  private func resetAlertController() {
+    alertController = nil
+  }
+}
+
+extension QuickLookEditorVC {
+  
+  private func deleteAttachmentFolder() {
+    do {
+      if let url {
+        try FileManager.default.removeItem(at: url.deletingLastPathComponent())
       }
-      checkAndUpdate(saveButton)
+    } catch {
+      print("Error While deleting attachmentFile")
     }
-    
-    private func checkAndUpdate(_ saveButton: UIBarButtonItem) {
-      
-      guard let rightBarButtons = navigationItem.rightBarButtonItems,
-            !rightBarButtons.isEmpty else {
-        if navigationItem.rightBarButtonItem == nil {
-          navigationItem.rightBarButtonItem = saveButton
+    dismissVC()
+    canSaveImage(false)
+  }
+  
+  private func deleteAttachmentFile(completion: (() -> Void)? = nil) {
+    do {
+      if let url, let oldURL = localURL {
+        let newPath = oldURL.path.replacingOccurrences(of: "Copy", with: "")
+        
+        if FileManager.default.fileExists(atPath: url.path) {
+          try FileManager.default.removeItem(at: url)
+          // Replace original image with edited version of image
+          try FileManager.default.moveItem(atPath: oldURL.path, toPath: newPath)
         }
-        return
-      }
-      
-      if navigationItem.rightBarButtonItem?.title != saveButton.title &&
-          !(navigationItem.rightBarButtonItems?.contains(where: { $0.title == saveButton.title }) ?? false) {
-        navigationItem.rightBarButtonItems?.append(saveButton)
-      }
-      guard let editIcon = rightBarButtons.first(
-        where: { $0.accessibilityIdentifier == "QLOverlayMarkupButtonAccessibilityIdentifier"}) else {
-        return
-      }
-      guard let image = editIcon.image else { return }
-      
-      if image.description.contains("pencil.tip.crop.circle.on") {
-        navigationItem.rightBarButtonItems?.removeAll(where: { $0.title == saveButton.title })
-      } else {
-        guard !image.description.contains("pencil.tip.crop.circle") else {
-          return
-        }
-        print("Error while editing: \(QuickLookEditError.editIconNotFound)")
-      }
-    }
-    
-    // MARK: - QLPreviewControllerDataSource
-    
-    public func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
-      return 1
-    }
-    
-    public func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
-      PreviewItem(url: parentView.localURL, title: parentView.localURL?.lastPathComponent ?? "")
-    }
-    
-    // MARK: - QLPreviewControllerDelegate
-    
-    public func previewController(_ controller: QLPreviewController,
-                                  editingModeFor previewItem: QLPreviewItem) -> QLPreviewItemEditingMode {
-      .updateContents
-    }
-    
-    // MARK: - NavigationItem
-    
-    @objc private func showDiscardAlert() {
-      showPopupForDiscardAlert()
-    }
-    
-    @objc private func showSaveAlert() {
-      addAttachmentItem()
-    }
-    
-    private func clearButtonClicked() {
-      parentView.localURL = parentView.createCopyOfFile(parentView.url)
-      self.reloadData()
-    }
-    
-    private func addAttachmentItem() {
-      deleteAttachmentFile()
-      parentView.selectedURL = parentView.url
-      parentView.dismiss()
-    }
-    
-    // MARK: - Discard Alert
-    
-    public func showPopupForDiscardAlert() {
-      let message = "Attachment File will be discarded. Do you wish to proceed?"
-      
-      let alert = UIAlertController(
-        title: "Warning",
-        message: message,
-        preferredStyle: .alert)
-      
-      // Back Button Action
-      let proceedAction = UIAlertAction(title: "Proceed",
-                                        style: .destructive) { [weak self] _ in
-        self?.deleteAttachmentFolder()
-      }
-      
-      let discardAction = UIAlertAction(title: "Discard Changes", style: .default) { [weak self] _ in
-        self?.clearButtonClicked()
-      }
-      
-      let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
-        alert.dismiss(animated: true)
-      }
-      
-      alert.addAction(proceedAction)
-      alert.addAction(discardAction)
-      alert.preferredAction = proceedAction
-      alert.addAction(cancelAction)
-      
-      self.present(alert, animated: true)
-    }
-    
-    private func deleteAttachmentFolder() {
-      do {
-        if let url = parentView.url {
-          try FileManager.default.removeItem(at: url.deletingLastPathComponent())
-        }
-      } catch {
-        print("Error While deleting attachmentFile: ")
-      }
-      parentView.dismiss()
-    }
-    
-    private func deleteAttachmentFile(completion: (() -> Void)? = nil) {
-      do {
-        if let url = parentView.url, let oldURL = parentView.localURL {
-          let newPath = oldURL.path().replacingOccurrences(of: "Copy", with: "")
-          
-          if FileManager.default.fileExists(atPath: url.path()) {
-            try FileManager.default.removeItem(at: url)
-            // Replace original image with edited version of image
-            try FileManager.default.moveItem(atPath: oldURL.path(), toPath: newPath)
-          }
-          completion?()
-        }
-      } catch {
-        print("Error While deleting attachmentFile: ")
         completion?()
       }
+    } catch {
+      print("Error While deleting attachmentFile: ")
+      completion?()
     }
   }
+}
+
+// MARK: - Create a Copy
+
+fileprivate func createCopyOfFile(_ url: URL?) -> URL? {
+  guard let url, FileManager.default.fileExists(atPath: url.path) else { return nil }
+  do {
+    let newPath = url.deletingPathExtension().path + "Copy.\(url.pathExtension)"
+    // Clear the existing file before creating copy
+    if FileManager.default.fileExists(atPath: newPath) {
+      try FileManager.default.removeItem(atPath: newPath)
+    }
+    try FileManager.default.copyItem(atPath: url.path, toPath: newPath)
+    return URL(fileURLWithPath: newPath)
+    
+  } catch {
+    print("Error while creating copy of url: \(url.path)")
+    return nil
+  }
+}
+
+extension QuickLookEditorVC {
   
   // MARK: - PreviewItem
   
@@ -219,30 +241,5 @@ public struct QuickLookEditorView: UIViewControllerRepresentable {
       previewItemURL = url
       previewItemTitle = title
     }
-  }
-  
-  // MARK: - Create a Copy
-  
-  public func createCopyOfFile(_ url: URL?) -> URL? {
-    guard let url, FileManager.default.fileExists(atPath: url.path()) else { return nil }
-    do {
-      let newPath = url.deletingPathExtension().path() + "Copy.\(url.pathExtension)"
-      // Clear the existing file before creating copy
-      if FileManager.default.fileExists(atPath: newPath) {
-        try FileManager.default.removeItem(atPath: newPath)
-      }
-      FileManager.default.copy(atPath: url.path(), to: newPath)
-      return URL(filePath: newPath)
-      
-    } catch {
-      print("Error while creating copy of url: \(url.path())")
-      return nil
-    }
-  }
-  
-  // MARK: - QuickLookEditError
-  
-  enum QuickLookEditError: Error {
-    case editIconNotFound
   }
 }
