@@ -133,12 +133,13 @@ extension QuickLookEditorVC {
   private func addAttachmentItem() {
     guard !isFromDiscard else { return }
     deleteAttachmentFile()
-    dismissVC()
-    canSaveImage(true)
+    dismissVC { [weak self] in
+      self?.canSaveImage(true)
+    }
   }
   
-  private func dismissVC() {
-    navigationController?.dismiss(animated: false)
+  private func dismissVC(_ completion: (() -> Void)? = nil) {
+    navigationController?.dismiss(animated: false, completion: completion)
   }
   
   // MARK: - Discard Alert
