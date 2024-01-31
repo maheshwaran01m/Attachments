@@ -44,7 +44,6 @@ struct ImagePickerView: UIViewControllerRepresentable {
         picker.mediaTypes = [UTType.movie.identifier]
         picker.cameraCaptureMode = .video
         picker.videoQuality = .typeHigh
-        picker.videoMaximumDuration = 60
       }
     } else {
       picker.sourceType = .photoLibrary
