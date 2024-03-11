@@ -95,7 +95,8 @@ struct AttachmentItem {
       let newFilePath = oldURL + fileName + "." + url.pathExtension
       
       do {
-        try FileManager.default.moveItem(atPath: url.path(), toPath: newFilePath)
+        let oldPath = url.deletingLastPathComponent().path() + (self.fileName ?? url.lastPathComponent)
+        try FileManager.default.moveItem(atPath: oldPath, toPath: newFilePath)
         
         if FileManager.default.fileExists(atPath: newFilePath) {
           var attachment = self
