@@ -7,7 +7,6 @@
 
 import SwiftUI
 import QuickLook
-import Toast
 
 struct ContentView: View {
   
@@ -151,6 +150,23 @@ struct ContentView: View {
         viewModel.attachmentFileNameAction(for: button)
       }
     }
+  }
+}
+
+// MARK: - Toast
+
+extension View {
+  
+  @ViewBuilder
+  func showToast(_ item: Binding<ToastMessage?>) -> some View {
+    self
+      .alert("Alert",
+             isPresented: Binding(get: { item.wrappedValue != nil},
+                                  set: { if !$0 { item.wrappedValue = nil }})) {
+        Button("Ok", role: .cancel) { }
+      } message: {
+        Text(item.wrappedValue?.message ?? "")
+      }
   }
 }
 
