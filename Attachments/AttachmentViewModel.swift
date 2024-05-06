@@ -9,7 +9,6 @@ import SwiftUI
 import PhotosUI
 import MobileCoreServices
 import UniformTypeIdentifiers
-import Toast
 
 class AttachmentViewModel: ObservableObject {
   
@@ -315,5 +314,16 @@ extension AttachmentViewModel {
     DispatchQueue.main.async {
       self.showFileNameAlert = show
     }
+  }
+}
+
+public struct ToastMessage: Identifiable, Equatable {
+  public var id: String = UUID().uuidString
+  public var message: String
+  public var style: Color
+  
+  public init(_ message: String, style: Color = .blue) {
+    self.message = message
+    self.style = style
   }
 }
