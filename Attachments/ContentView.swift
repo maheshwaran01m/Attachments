@@ -108,7 +108,7 @@ struct ContentView: View {
       }
       .sheet(isPresented: $viewModel.quickLookEdit) {
         if let path = viewModel.selectedAttachmentItem?.localFilePath, !path.isEmpty {
-          QuickLookEditorView(
+          QuickLookCoordinatorView(
             .init(filePath: path),
             selectedURL: $viewModel.selectedQuickLookItem)
         }

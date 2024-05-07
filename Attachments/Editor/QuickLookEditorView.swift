@@ -11,26 +11,20 @@ import QuickLook
 public struct QuickLookEditorView: UIViewControllerRepresentable {
   
   public typealias Context = UIViewControllerRepresentableContext<Self>
-  
-  @Environment(\.dismiss) private var dismiss
-  @Binding var selectedURL: URL?
+    
+  private var canSaveImage: (Bool) -> Void
   
   private let url: URL?
   private var localURL: URL?
   
-  public init(_ url: URL?, selectedURL: Binding<URL?>) {
-    _selectedURL = selectedURL
+  public init(_ url: URL?, canSaveImage: @escaping (Bool) -> Void) {
+    self.canSaveImage = canSaveImage
     self.url = url
     self.localURL = createCopyOfFile(url)
   }
   
   public func makeUIViewController(context: Context) -> UIViewController {
-    let vc = QuickLookEditorVC(for: url, localURL: localURL) { isEnabled in
-      if isEnabled {
-        selectedURL = url
-      }
-      dismiss()
-    }
+    let vc = QuickLookEditorVC(for: url, localURL: localURL, canSaveImage: canSaveImage)
     return UINavigationController(rootViewController: vc)
   }
   
@@ -133,13 +127,11 @@ extension QuickLookEditorVC {
   private func addAttachmentItem() {
     guard !isFromDiscard else { return }
     deleteAttachmentFile()
-    dismissVC { [weak self] in
-      self?.canSaveImage(true)
-    }
+    canSaveImage(true)
   }
   
-  private func dismissVC(_ completion: (() -> Void)? = nil) {
-    navigationController?.dismiss(animated: false, completion: completion)
+  private func dismissVC() {
+    canSaveImage(false)
   }
   
   // MARK: - Discard Alert
@@ -188,7 +180,6 @@ extension QuickLookEditorVC {
     } catch {
       print("Error While deleting attachmentFile")
     }
-    dismissVC()
     canSaveImage(false)
   }
   
@@ -242,5 +233,35 @@ extension QuickLookEditorVC {
       previewItemURL = url
       previewItemTitle = title
     }
+  }
+}
+
+// MARK: - Coordinator
+
+struct QuickLookCoordinatorView: View {
+  
+  @SwiftUI.Environment(\.dismiss) private var dismiss
+
+  @Binding var selectedURL: URL?
+  @State private var canSaveImage = false
+  
+  private let url: URL?
+  
+  public init(_ url: URL?, selectedURL: Binding<URL?>) {
+    _selectedURL = selectedURL
+    self.url = url
+  }
+  
+  var body: some View {
+    QuickLookEditorView(url) { canSaveImage in
+      self.canSaveImage = canSaveImage
+      dismiss()
+    }
+    .onDisappear(perform: updateAttachmentURL)
+  }
+  
+  private func updateAttachmentURL() {
+    guard canSaveImage, let url else { return }
+    selectedURL = url
   }
 }
